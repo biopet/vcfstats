@@ -2,8 +2,6 @@ organization := "com.github.biopet"
 //TODO: change name
 name := "tool-template"
 
-version := "0.1.0-SNAPSHOT"
-
 scalaVersion := "2.11.11"
 
 resolvers += Resolver.mavenLocal

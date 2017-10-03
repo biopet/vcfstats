@@ -6,9 +6,6 @@ scalaVersion := "2.11.11"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
-//TODO: change name
-lazy val toolTemplate = project in file(".")
-
 libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1.0-SNAPSHOT"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % Test

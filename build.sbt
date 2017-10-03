@@ -4,8 +4,6 @@ name := "tool-template"
 
 scalaVersion := "2.11.11"
 
-resolvers += Resolver.mavenLocal
-
 //TODO: change name
 lazy val toolTemplate = project in file(".")
 
@@ -36,9 +34,9 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  //releaseStepCommand("publishSigned"),
+  releaseStepCommand("publishSigned"),
   setNextVersion,
-  commitNextVersion//,
-  //releaseStepCommand("sonatypeReleaseAll"),
-  //pushChanges
+  commitNextVersion,
+  releaseStepCommand("sonatypeReleaseAll"),
+  pushChanges
 )

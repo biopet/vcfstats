@@ -4,6 +4,8 @@ name := "tool-template"
 
 scalaVersion := "2.11.11"
 
+resolvers += Resolver.sonatypeRepo("snapshots")
+
 //TODO: change name
 lazy val toolTemplate = project in file(".")
 

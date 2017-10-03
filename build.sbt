@@ -8,8 +8,7 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1.0-SNAPSHOT"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % Test
-libraryDependencies += "org.testng" % "testng" % "6.8" % Test
+libraryDependencies += "com.github.biopet" %% "biopet-test-utils" % "0.1.0-SNAPSHOT" % Test
 
 //TODO: change mainClass
 mainClass in assembly := Some("nl.biopet.tools.template.Main")

@@ -5,6 +5,11 @@ scalaVersion := "2.11.11"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
+fork in Test := true
+parallelExecution in Test := false
+
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.5"
+
 libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1.0-SNAPSHOT" changing()
 libraryDependencies += "com.github.biopet" %% "biopet-ngs-utils" % "0.1.0-SNAPSHOT" changing()
 libraryDependencies += "com.github.biopet" %% "biopet-spark-utils" % "0.1.0-SNAPSHOT" changing()

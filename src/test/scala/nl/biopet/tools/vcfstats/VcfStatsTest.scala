@@ -5,7 +5,9 @@ import org.testng.annotations.Test
 
 class VcfStatsTest extends BiopetTest {
   @Test
-  def testMain(): Unit = {
-    VcfStats.main(Array("-i", "inputFile"))
+  def testNoArgs(): Unit = {
+    intercept[IllegalArgumentException] {
+      VcfStats.main(Array())
+    }
   }
 }

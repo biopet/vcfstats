@@ -1,17 +1,18 @@
 organization := "com.github.biopet"
-//TODO: change name
-name := "tool-template"
+name := "vcfstats"
 
 scalaVersion := "2.11.11"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
-libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1.0-SNAPSHOT"
+libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1.0-SNAPSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-ngs-utils" % "0.1.0-SNAPSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-spark-utils" % "0.1.0-SNAPSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-config-utils" % "0.1.0-SNAPSHOT" changing()
 
-libraryDependencies += "com.github.biopet" %% "biopet-test-utils" % "0.1.0-SNAPSHOT" % Test
+libraryDependencies += "com.github.biopet" %% "biopet-test-utils" % "0.1.0-SNAPSHOT" % Test changing()
 
-//TODO: change mainClass
-mainClass in assembly := Some("nl.biopet.tools.template.Main")
+mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
 useGpg := true
 

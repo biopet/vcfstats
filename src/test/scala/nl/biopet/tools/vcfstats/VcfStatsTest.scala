@@ -160,7 +160,7 @@ class VcfStatsTest extends BiopetTest {
 
     // returns null when validation fails
     def validateArgs(array: Array[String]): Option[Args] = {
-      val argsParser = new ArgsParser("vcfstats")
+      val argsParser = new ArgsParser("nl/biopet/tools/vcfstats")
       argsParser.parse(array, Args())
     }
 

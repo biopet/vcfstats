@@ -17,7 +17,7 @@ package nl.biopet.tools.vcfstats
 import java.io.{File, FileOutputStream, IOException, PrintWriter}
 
 import nl.biopet.utils.Logging
-import nl.biopet.utils.config.Config
+import nl.biopet.utils.config.Conversions
 import nl.biopet.utils.sortAnyAny
 import play.api.libs.json.{JsObject, Json}
 
@@ -165,7 +165,7 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
              genotypeFields: List[String],
              infoFields: List[String],
              sampleDistributions: List[String]): JsObject = {
-    Config.mapToJson(getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions))
+    Conversions.mapToJson(getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions))
   }
 
   def writeAllOutput(outputDir: File,
@@ -193,8 +193,8 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
     val allWriter = new PrintWriter(outputFile)
     val map = this.getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions)
     val json = contig match {
-      case Some(c) => Config.mapToJson(Map("contigs" -> Map(c -> map)))
-      case _ => Config.mapToJson(Map("total" -> map))
+      case Some(c) => Conversions.mapToJson(Map("contigs" -> Map(c -> map)))
+      case _ => Conversions.mapToJson(Map("total" -> map))
     }
     allWriter.println(Json.stringify(json))
     allWriter.close()

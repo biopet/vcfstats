@@ -1,5 +1,5 @@
 organization := "com.github.biopet"
-name := "nl/biopet/tools/vcfstats"
+name := "VcfStats"
 
 scalaVersion := "2.11.11"
 

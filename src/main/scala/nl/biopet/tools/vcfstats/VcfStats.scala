@@ -33,9 +33,10 @@ object VcfStats extends ToolCommand {
     reader.close()
 
     val adInfoTags = {
-      (for (infoTag <- cmdArgs.infoTags if !defaultInfoFields.contains(infoTag)) yield {
+      (for (infoTag <- cmdArgs.infoTags
+            if !defaultInfoFields.contains(infoTag)) yield {
         require(header.getInfoHeaderLine(infoTag) != null,
-          "Info tag '" + infoTag + "' not found in header of vcf file")
+                "Info tag '" + infoTag + "' not found in header of vcf file")
         infoTag
       }) ::: (for (line <- header.getInfoHeaderLines if cmdArgs.allInfoTags
                    if !defaultInfoFields.contains(line.getID)
@@ -45,14 +46,17 @@ object VcfStats extends ToolCommand {
     }
 
     val adGenotypeTags = (for (genotypeTag <- cmdArgs.genotypeTags
-                               if !defaultGenotypeFields.contains(genotypeTag)) yield {
-      require(header.getFormatHeaderLine(genotypeTag) != null,
-        "Format tag '" + genotypeTag + "' not found in header of vcf file")
-      genotypeTag
-    }) ::: (for (line <- header.getFormatHeaderLines if cmdArgs.allGenotypeTags
-                 if !defaultGenotypeFields.contains(line.getID)
-                 if !cmdArgs.genotypeTags.contains(line.getID)
-                 if line.getID != "PL") yield {
+                               if !defaultGenotypeFields.contains(genotypeTag))
+      yield {
+        require(
+          header.getFormatHeaderLine(genotypeTag) != null,
+          "Format tag '" + genotypeTag + "' not found in header of vcf file")
+        genotypeTag
+      }) ::: (for (line <- header.getFormatHeaderLines
+                   if cmdArgs.allGenotypeTags
+                   if !defaultGenotypeFields.contains(line.getID)
+                   if !cmdArgs.genotypeTags.contains(line.getID)
+                   if line.getID != "PL") yield {
       line.getID
     }).toList ::: defaultGenotypeFields
 
@@ -67,7 +71,8 @@ object VcfStats extends ToolCommand {
       new SparkConf()
         .setExecutorEnv(sys.env.toArray)
         .setAppName(toolName)
-        .setMaster(cmdArgs.sparkMaster.getOrElse(s"local[${cmdArgs.localThreads}]"))
+        .setMaster(
+          cmdArgs.sparkMaster.getOrElse(s"local[${cmdArgs.localThreads}]"))
         .setJars(jars))((a, b) => a.set(b._1, b._2))
     val sc = new SparkContext(conf)
     logger.info("Spark context is up")
@@ -77,46 +82,52 @@ object VcfStats extends ToolCommand {
         BedRecordList.fromFile(i).validateContigs(cmdArgs.referenceFile)
       case _ => BedRecordList.fromReference(cmdArgs.referenceFile)
     }).combineOverlap
-      .scatter(cmdArgs.binSize, maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
+      .scatter(cmdArgs.binSize,
+               maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
     val nonEmptyRegions = BedRecordList
       .fromList(
-        sc.parallelize(regions, regions.size).flatMap(filterEmptyBins(_, cmdArgs)).collect())
-      .scatter(cmdArgs.binSize, maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
+        sc.parallelize(regions, regions.size)
+          .flatMap(filterEmptyBins(_, cmdArgs))
+          .collect())
+      .scatter(cmdArgs.binSize,
+               maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
 
     val contigs = nonEmptyRegions.flatMap(_.map(_.chr))
 
-    val bigContigs = nonEmptyRegions.filter(_.size == 1).flatten.groupBy(_.chr).map {
-      case (_, r) =>
-        val rdds = r
-          .grouped(10)
-          .map(
-            g =>
-              sc.parallelize(g.map(List(_)), g.size)
-                .flatMap(readBins(_, samples, cmdArgs, adInfoTags, adGenotypeTags))
-                .reduceByKey(_ += _)
-                .repartition(1))
-          .toList
+    val bigContigs =
+      nonEmptyRegions.filter(_.size == 1).flatten.groupBy(_.chr).map {
+        case (_, r) =>
+          val rdds = r
+            .grouped(10)
+            .map(
+              g =>
+                sc.parallelize(g.map(List(_)), g.size)
+                  .flatMap(
+                    readBins(_, samples, cmdArgs, adInfoTags, adGenotypeTags))
+                  .reduceByKey(_ += _)
+                  .repartition(1))
+            .toList
 
-        val steps = Math.log10(rdds.size).ceil.toInt
-        val lastRdds = (1 until steps)
-          .foldLeft(rdds) {
-            case (a, _) =>
-              if (a.size > 10)
-                a.grouped(10)
-                  .map { g =>
-                    sc.union(g)
-                      .reduceByKey(_ += _)
-                      .repartition(1)
-                  }
-                  .toList
-              else a
-          }
-        if (lastRdds.size > 1) {
-          sc.union(lastRdds)
-            .reduceByKey(_ += _)
-            .repartition(1)
-        } else lastRdds.head
-    }
+          val steps = Math.log10(rdds.size).ceil.toInt
+          val lastRdds = (1 until steps)
+            .foldLeft(rdds) {
+              case (a, _) =>
+                if (a.size > 10)
+                  a.grouped(10)
+                    .map { g =>
+                      sc.union(g)
+                        .reduceByKey(_ += _)
+                        .repartition(1)
+                    }
+                    .toList
+                else a
+            }
+          if (lastRdds.size > 1) {
+            sc.union(lastRdds)
+              .reduceByKey(_ += _)
+              .repartition(1)
+          } else lastRdds.head
+      }
     val smallContigs = nonEmptyRegions.filter(_.size > 1).map { r =>
       sc.parallelize(r.map(List(_)), r.size)
         .flatMap(readBins(_, samples, cmdArgs, adInfoTags, adGenotypeTags))
@@ -127,13 +138,18 @@ object VcfStats extends ToolCommand {
     val contigsRdd = sc.union(smallContigs ++ bigContigs).cache
 
     val totalRdd = (contigsRdd
-      .map("total" -> _._2) ++ sc.parallelize(List("total" -> Stats.emptyStats(samples)), 1))
+      .map("total" -> _._2) ++ sc.parallelize(
+      List("total" -> Stats.emptyStats(samples)),
+      1))
       .reduceByKey(_ += _)
       .cache()
 
     val totalJson = totalRdd.map {
       case (_, stats) =>
-        val json = stats.asJson(samples, adGenotypeTags, adInfoTags, sampleDistributions)
+        val json = stats.asJson(samples,
+                                adGenotypeTags,
+                                adInfoTags,
+                                sampleDistributions)
         val outputFile = new File(cmdArgs.outputDir, "total.json")
         stats.writeOverlap(cmdArgs.outputDir, samples)
         IoUtils.writeLinesToFile(outputFile, Json.stringify(json) :: Nil)
@@ -142,9 +158,13 @@ object VcfStats extends ToolCommand {
 
     val contigJsons = contigsRdd.map {
       case (contig, stats) =>
-        val json = stats.asJson(samples, adGenotypeTags, adInfoTags, sampleDistributions)
+        val json = stats.asJson(samples,
+                                adGenotypeTags,
+                                adInfoTags,
+                                sampleDistributions)
         val outputFile =
-          new File(cmdArgs.outputDir,
+          new File(
+            cmdArgs.outputDir,
             "contigs" + File.separator + contig + File.separator + s"$contig.json")
         outputFile.getParentFile.mkdirs()
         stats.writeOverlap(outputFile.getParentFile, samples)
@@ -159,12 +179,14 @@ object VcfStats extends ToolCommand {
         contigJsons.count()
         Future.successful(contigs.map(_ -> JsNull).toMap)
       }
-    val result = JsObject(Map(
-      "total" -> Await.result(totalJsonFuture, Duration.Inf).head,
-      "contigs" -> JsObject(Await.result(contigsJsonsFuture, Duration.Inf))
-    ))
+    val result = JsObject(
+      Map(
+        "total" -> Await.result(totalJsonFuture, Duration.Inf).head,
+        "contigs" -> JsObject(Await.result(contigsJsonsFuture, Duration.Inf))
+      ))
 
-    IoUtils.writeLinesToFile(new File(cmdArgs.outputDir, "stats.json"), Json.stringify(result) :: Nil)
+    IoUtils.writeLinesToFile(new File(cmdArgs.outputDir, "stats.json"),
+                             Json.stringify(result) :: Nil)
 
     sc.stop
     logger.info("Done")
@@ -181,7 +203,9 @@ object VcfStats extends ToolCommand {
 
     val samInterval = bedRecord.toSamInterval
 
-    val query = reader.query(samInterval.getContig, samInterval.getStart, samInterval.getEnd)
+    val query = reader.query(samInterval.getContig,
+                             samInterval.getStart,
+                             samInterval.getEnd)
 
     if (query.nonEmpty) {
       val stats = Stats.emptyStats(samples)
@@ -189,21 +213,30 @@ object VcfStats extends ToolCommand {
       Stats.mergeNestedStatsMap(stats.generalStats, fillGeneral(adInfoTags))
       for (sample <- samples.zipWithIndex) yield {
         Stats.mergeNestedStatsMap(stats.samplesStats(sample._2).genotypeStats,
-          fillGenotype(adGenotypeTags))
+                                  fillGenotype(adGenotypeTags))
       }
 
       for (record <- query if record.getStart <= samInterval.getEnd) {
-        Stats.mergeNestedStatsMap(stats.generalStats, checkGeneral(record, adInfoTags))
+        Stats.mergeNestedStatsMap(stats.generalStats,
+                                  checkGeneral(record, adInfoTags))
         for (sample1 <- samples.zipWithIndex) yield {
           val genotype = record.getGenotype(sample1._2)
-          Stats.mergeNestedStatsMap(stats.samplesStats(sample1._2).genotypeStats,
+          Stats.mergeNestedStatsMap(
+            stats.samplesStats(sample1._2).genotypeStats,
             checkGenotype(record, genotype, adGenotypeTags))
           for (sample2 <- samples.zipWithIndex) {
             val genotype2 = record.getGenotype(sample2._2)
             if (genotype.getAlleles == genotype2.getAlleles)
-              stats.samplesStats(sample1._2).sampleToSample(sample2._2).genotypeOverlap += 1
-            stats.samplesStats(sample1._2).sampleToSample(sample2._2).alleleOverlap += VcfUtils
-              .alleleOverlap(genotype.getAlleles.toList, genotype2.getAlleles.toList)
+              stats
+                .samplesStats(sample1._2)
+                .sampleToSample(sample2._2)
+                .genotypeOverlap += 1
+            stats
+              .samplesStats(sample1._2)
+              .sampleToSample(sample2._2)
+              .alleleOverlap += VcfUtils
+              .alleleOverlap(genotype.getAlleles.toList,
+                             genotype2.getAlleles.toList)
           }
         }
       }
@@ -222,21 +255,24 @@ object VcfStats extends ToolCommand {
     val reader = new VCFFileReader(cmdArgs.inputFile, true)
 
     val stats = for (bedRecord <- bedRecords) yield {
-      readBin(bedRecord, samples, cmdArgs, adInfoTags, adGenotypeTags, reader).map(
-        bedRecord.chr -> _)
+      readBin(bedRecord, samples, cmdArgs, adInfoTags, adGenotypeTags, reader)
+        .map(bedRecord.chr -> _)
     }
     reader.close()
 
     stats.flatten
   }
 
-  def filterEmptyBins(bedRecords: List[BedRecord], cmdArgs: Args): List[BedRecord] = {
+  def filterEmptyBins(bedRecords: List[BedRecord],
+                      cmdArgs: Args): List[BedRecord] = {
     val reader = new VCFFileReader(cmdArgs.inputFile, true)
 
     val stats = for (bedRecord <- bedRecords) yield {
       val samInterval = bedRecord.toSamInterval
 
-      val query = reader.query(samInterval.getContig, samInterval.getStart, samInterval.getEnd)
+      val query = reader.query(samInterval.getContig,
+                               samInterval.getStart,
+                               samInterval.getEnd)
       if (query.nonEmpty) Some(bedRecord)
       else None
     }
@@ -246,40 +282,52 @@ object VcfStats extends ToolCommand {
   }
 
   val defaultGenotypeFields =
-    List("DP", "GQ", "AD", "AD-ref", "AD-alt", "AD-used", "AD-not_used", "general")
+    List("DP",
+         "GQ",
+         "AD",
+         "AD-ref",
+         "AD-alt",
+         "AD-used",
+         "AD-not_used",
+         "general")
 
   val defaultInfoFields = List("QUAL", "general", "AC", "AF", "AN", "DP")
 
   val sampleDistributions = List("Het",
-    "HetNonRef",
-    "Hom",
-    "HomRef",
-    "HomVar",
-    "Mixed",
-    "NoCall",
-    "NonInformative",
-    "Available",
-    "Called",
-    "Filtered",
-    "Variant")
+                                 "HetNonRef",
+                                 "Hom",
+                                 "HomRef",
+                                 "HomVar",
+                                 "Mixed",
+                                 "NoCall",
+                                 "NonInformative",
+                                 "Available",
+                                 "Called",
+                                 "Filtered",
+                                 "Variant")
 
   /** Function to check sample/genotype specific stats */
-  protected[tools] def checkGenotype(record: VariantContext,
-                                     genotype: Genotype,
-                                     additionalTags: List[String]): Map[String, Map[Any, Int]] = {
+  protected[tools] def checkGenotype(
+      record: VariantContext,
+      genotype: Genotype,
+      additionalTags: List[String]): Map[String, Map[Any, Int]] = {
     val buffer = mutable.Map[String, Map[Any, Int]]()
 
     def addToBuffer(key: String, value: Any, found: Boolean): Unit = {
       val map = buffer.getOrElse(key, Map())
-      if (found) buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
+      if (found)
+        buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
       else buffer += key -> (map + (value -> map.getOrElse(value, 0)))
     }
 
-    buffer += "DP" -> Map((if (genotype.hasDP) genotype.getDP else "not set") -> 1)
-    buffer += "GQ" -> Map((if (genotype.hasGQ) genotype.getGQ else "not set") -> 1)
+    buffer += "DP" -> Map(
+      (if (genotype.hasDP) genotype.getDP else "not set") -> 1)
+    buffer += "GQ" -> Map(
+      (if (genotype.hasGQ) genotype.getGQ else "not set") -> 1)
 
     val usedAlleles =
-      (for (allele <- genotype.getAlleles) yield record.getAlleleIndex(allele)).toList
+      (for (allele <- genotype.getAlleles)
+        yield record.getAlleleIndex(allele)).toList
 
     addToBuffer("general", "Total", found = true)
     addToBuffer("general", "Het", genotype.isHet)
@@ -293,7 +341,9 @@ object VcfStats extends ToolCommand {
     addToBuffer("general", "Available", genotype.isAvailable)
     addToBuffer("general", "Called", genotype.isCalled)
     addToBuffer("general", "Filtered", genotype.isFiltered)
-    addToBuffer("general", "Variant", genotype.isHetNonRef || genotype.isHet || genotype.isHomVar)
+    addToBuffer("general",
+                "Variant",
+                genotype.isHetNonRef || genotype.isHet || genotype.isHomVar)
 
     if (genotype.hasAD) {
       val ad = genotype.getAD
@@ -301,12 +351,20 @@ object VcfStats extends ToolCommand {
         addToBuffer("AD", ad(i), found = true)
         if (i == 0) addToBuffer("AD-ref", ad(i), found = true)
         if (i > 0) addToBuffer("AD-alt", ad(i), found = true)
-        if (usedAlleles.contains(i)) addToBuffer("AD-used", ad(i), found = true)
+        if (usedAlleles.contains(i))
+          addToBuffer("AD-used", ad(i), found = true)
         else addToBuffer("AD-not_used", ad(i), found = true)
       }
     }
 
-    val skipTags = List("DP", "GQ", "AD", "AD-ref", "AD-alt", "AD-used", "AD-not_used", "general")
+    val skipTags = List("DP",
+                        "GQ",
+                        "AD",
+                        "AD-ref",
+                        "AD-alt",
+                        "AD-used",
+                        "AD-not_used",
+                        "general")
 
     for (tag <- additionalTags if !skipTags.contains(tag)) {
       val value = genotype.getAnyAttribute(tag)
@@ -318,55 +376,58 @@ object VcfStats extends ToolCommand {
   }
 
   /** Function to check all general stats, all info expect sample/genotype specific stats */
-  protected[tools] def checkGeneral(record: VariantContext,
-                                    additionalTags: List[String]): Map[String, Map[Any, Int]] = {
+  protected[tools] def checkGeneral(
+      record: VariantContext,
+      additionalTags: List[String]): Map[String, Map[Any, Int]] = {
     val buffer = mutable.Map[String, Map[Any, Int]]()
 
     def addToBuffer(key: String, value: Any, found: Boolean): Unit = {
       val map = buffer.getOrElse(key, Map())
-      if (found) buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
+      if (found)
+        buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
       else buffer += key -> (map + (value -> map.getOrElse(value, 0)))
     }
 
     addToBuffer("QUAL", Math.round(record.getPhredScaledQual), found = true)
 
     addToBuffer("SampleDistribution-Het",
-      record.getGenotypes.count(genotype => genotype.isHet),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isHet),
+                found = true)
     addToBuffer("SampleDistribution-HetNonRef",
-      record.getGenotypes.count(genotype => genotype.isHetNonRef),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isHetNonRef),
+                found = true)
     addToBuffer("SampleDistribution-Hom",
-      record.getGenotypes.count(genotype => genotype.isHom),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isHom),
+                found = true)
     addToBuffer("SampleDistribution-HomRef",
-      record.getGenotypes.count(genotype => genotype.isHomRef),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isHomRef),
+                found = true)
     addToBuffer("SampleDistribution-HomVar",
-      record.getGenotypes.count(genotype => genotype.isHomVar),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isHomVar),
+                found = true)
     addToBuffer("SampleDistribution-Mixed",
-      record.getGenotypes.count(genotype => genotype.isMixed),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isMixed),
+                found = true)
     addToBuffer("SampleDistribution-NoCall",
-      record.getGenotypes.count(genotype => genotype.isNoCall),
-      found = true)
-    addToBuffer("SampleDistribution-NonInformative",
+                record.getGenotypes.count(genotype => genotype.isNoCall),
+                found = true)
+    addToBuffer(
+      "SampleDistribution-NonInformative",
       record.getGenotypes.count(genotype => genotype.isNonInformative),
       found = true)
     addToBuffer("SampleDistribution-Available",
-      record.getGenotypes.count(genotype => genotype.isAvailable),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isAvailable),
+                found = true)
     addToBuffer("SampleDistribution-Called",
-      record.getGenotypes.count(genotype => genotype.isCalled),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isCalled),
+                found = true)
     addToBuffer("SampleDistribution-Filtered",
-      record.getGenotypes.count(genotype => genotype.isFiltered),
-      found = true)
+                record.getGenotypes.count(genotype => genotype.isFiltered),
+                found = true)
     addToBuffer("SampleDistribution-Variant",
-      record.getGenotypes.count(genotype =>
-        genotype.isHetNonRef || genotype.isHet || genotype.isHomVar),
-      found = true)
+                record.getGenotypes.count(genotype =>
+                  genotype.isHetNonRef || genotype.isHet || genotype.isHomVar),
+                found = true)
 
     addToBuffer("general", "Total", found = true)
     addToBuffer("general", "Biallelic", record.isBiallelic)
@@ -376,10 +437,14 @@ object VcfStats extends ToolCommand {
     addToBuffer("general", "Indel", record.isIndel)
     addToBuffer("general", "Mixed", record.isMixed)
     addToBuffer("general", "MNP", record.isMNP)
-    addToBuffer("general", "MonomorphicInSamples", record.isMonomorphicInSamples)
+    addToBuffer("general",
+                "MonomorphicInSamples",
+                record.isMonomorphicInSamples)
     addToBuffer("general", "NotFiltered", record.isNotFiltered)
     addToBuffer("general", "PointEvent", record.isPointEvent)
-    addToBuffer("general", "PolymorphicInSamples", record.isPolymorphicInSamples)
+    addToBuffer("general",
+                "PolymorphicInSamples",
+                record.isPolymorphicInSamples)
     addToBuffer("general", "SimpleDeletion", record.isSimpleDeletion)
     addToBuffer("general", "SimpleInsertion", record.isSimpleInsertion)
     addToBuffer("general", "SNP", record.isSNP)
@@ -399,12 +464,14 @@ object VcfStats extends ToolCommand {
     buffer.toMap
   }
 
-  protected[tools] def fillGeneral(additionalTags: List[String]): Map[String, Map[Any, Int]] = {
+  protected[tools] def fillGeneral(
+      additionalTags: List[String]): Map[String, Map[Any, Int]] = {
     val buffer = mutable.Map[String, Map[Any, Int]]()
 
     def addToBuffer(key: String, value: Any, found: Boolean): Unit = {
       val map = buffer.getOrElse(key, Map())
-      if (found) buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
+      if (found)
+        buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
       else buffer += key -> (map + (value -> map.getOrElse(value, 0)))
     }
 
@@ -452,12 +519,14 @@ object VcfStats extends ToolCommand {
     buffer.toMap
   }
 
-  protected[tools] def fillGenotype(additionalTags: List[String]): Map[String, Map[Any, Int]] = {
+  protected[tools] def fillGenotype(
+      additionalTags: List[String]): Map[String, Map[Any, Int]] = {
     val buffer = mutable.Map[String, Map[Any, Int]]()
 
     def addToBuffer(key: String, value: Any, found: Boolean): Unit = {
       val map = buffer.getOrElse(key, Map())
-      if (found) buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
+      if (found)
+        buffer += key -> (map + (value -> (map.getOrElse(value, 0) + 1)))
       else buffer += key -> (map + (value -> map.getOrElse(value, 0)))
     }
 
@@ -478,7 +547,14 @@ object VcfStats extends ToolCommand {
     addToBuffer("general", "Filtered", found = false)
     addToBuffer("general", "Variant", found = false)
 
-    val skipTags = List("DP", "GQ", "AD", "AD-ref", "AD-alt", "AD-used", "AD-not_used", "general")
+    val skipTags = List("DP",
+                        "GQ",
+                        "AD",
+                        "AD-ref",
+                        "AD-alt",
+                        "AD-used",
+                        "AD-not_used",
+                        "general")
 
     for (tag <- additionalTags if !skipTags.contains(tag)) {
       addToBuffer(tag, 0, found = false)

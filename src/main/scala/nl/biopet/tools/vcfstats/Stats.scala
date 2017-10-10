@@ -30,7 +30,8 @@ import scala.sys.process.{Process, ProcessLogger}
   * @param generalStats Stores are general stats
   * @param samplesStats Stores all sample/genotype specific stats
   */
-case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = mutable.Map(),
+case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] =
+                   mutable.Map(),
                  samplesStats: mutable.Map[Int, SampleStats] = mutable.Map()) {
 
   /** Add an other class */
@@ -112,7 +113,8 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
   }
 
   /** Function to write 1 specific genotype field */
-  def getGenotypeField(samples: List[String], field: String): Map[String, Map[String, Any]] = {
+  def getGenotypeField(samples: List[String],
+                       field: String): Map[String, Map[String, Any]] = {
     val keySet = (for ((sample, sampleIndex) <- samples.zipWithIndex)
       yield
         this
@@ -138,22 +140,29 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
   }
 
   /** This will generate stats for one contig */
-  def getStatsAsMap(samples: List[String],
-                    genotypeFields: List[String] = Nil,
-                    infoFields: List[String] = Nil,
-                    sampleDistributions: List[String] = Nil): Map[String, Any] = {
+  def getStatsAsMap(
+      samples: List[String],
+      genotypeFields: List[String] = Nil,
+      infoFields: List[String] = Nil,
+      sampleDistributions: List[String] = Nil): Map[String, Any] = {
     val sampleIndex = samples.zipWithIndex
     Map(
-      "genotype" -> genotypeFields.map(f => f -> getGenotypeField(samples, f)).toMap,
+      "genotype" -> genotypeFields
+        .map(f => f -> getGenotypeField(samples, f))
+        .toMap,
       "info" -> infoFields.map(f => f -> getField(f)).toMap,
       "sample_distributions" -> sampleDistributions
         .map(f => f -> getField("SampleDistribution-" + f))
         .toMap,
       "sample_compare" -> Map(
         "samples" -> samples,
-        "genotype_overlap" -> sampleIndex.map(sample1 =>
-          sampleIndex.map(sample2 =>
-            samplesStats(sample1._2).sampleToSample(sample2._2).genotypeOverlap)),
+        "genotype_overlap" -> sampleIndex.map(
+          sample1 =>
+            sampleIndex.map(
+              sample2 =>
+                samplesStats(sample1._2)
+                  .sampleToSample(sample2._2)
+                  .genotypeOverlap)),
         "allele_overlap" -> sampleIndex.map(sample1 =>
           sampleIndex.map(sample2 =>
             samplesStats(sample1._2).sampleToSample(sample2._2).alleleOverlap))
@@ -165,7 +174,8 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
              genotypeFields: List[String],
              infoFields: List[String],
              sampleDistributions: List[String]): JsObject = {
-    Conversions.mapToJson(getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions))
+    Conversions.mapToJson(
+      getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions))
   }
 
   def writeAllOutput(outputDir: File,
@@ -191,7 +201,10 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
                   sampleDistributions: List[String],
                   contig: Option[String]): Unit = {
     val allWriter = new PrintWriter(outputFile)
-    val map = this.getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions)
+    val map = this.getStatsAsMap(samples,
+                                 genotypeFields,
+                                 infoFields,
+                                 sampleDistributions)
     val json = contig match {
       case Some(c) => Conversions.mapToJson(Map("contigs" -> Map(c -> map)))
       case _ => Conversions.mapToJson(Map("total" -> map))
@@ -201,8 +214,12 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
   }
 
   def writeOverlap(outputDir: File, samples: List[String]): Unit = {
-    this.writeOverlap(_.genotypeOverlap, outputDir + "/sample_compare/genotype_overlap", samples)
-    this.writeOverlap(_.alleleOverlap, outputDir + "/sample_compare/allele_overlap", samples)
+    this.writeOverlap(_.genotypeOverlap,
+                      outputDir + "/sample_compare/genotype_overlap",
+                      samples)
+    this.writeOverlap(_.alleleOverlap,
+                      outputDir + "/sample_compare/allele_overlap",
+                      samples)
   }
 
   /** Function to write sample to sample compare tsv's / heatmaps */
@@ -222,12 +239,15 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] = muta
     relWriter.println(samples.mkString("\t", "\t", ""))
     for (sample1 <- samples.zipWithIndex) {
       val values = for (sample2 <- samples.zipWithIndex)
-        yield function(this.samplesStats(sample1._2).sampleToSample(sample2._2))
+        yield
+          function(this.samplesStats(sample1._2).sampleToSample(sample2._2))
 
       absWriter.println(values.mkString(sample1._1 + "\t", "\t", ""))
 
-      val total = function(this.samplesStats(sample1._2).sampleToSample(sample1._2))
-      relWriter.println(values.map(_.toFloat / total).mkString(sample1._1 + "\t", "\t", ""))
+      val total = function(
+        this.samplesStats(sample1._2).sampleToSample(sample1._2))
+      relWriter.println(
+        values.map(_.toFloat / total).mkString(sample1._1 + "\t", "\t", ""))
     }
     absWriter.close()
     relWriter.close()
@@ -251,7 +271,8 @@ object Stats extends Logging {
   }
 
   /** Merge m2 into m1 */
-  def mergeStatsMap(m1: mutable.Map[Any, Int], m2: mutable.Map[Any, Int]): Unit = {
+  def mergeStatsMap(m1: mutable.Map[Any, Int],
+                    m2: mutable.Map[Any, Int]): Unit = {
     for (key <- m2.keySet)
       m1(key) = m1.getOrElse(key, 0) + m2(key)
   }
@@ -295,7 +316,8 @@ object Stats extends Logging {
 
     logger.info("Starting: " + command)
     try {
-      val process = Process(command).run(ProcessLogger(x => logger.debug(x), x => logger.debug(x)))
+      val process = Process(command).run(
+        ProcessLogger(x => logger.debug(x), x => logger.debug(x)))
       if (process.exitValue() == 0) logger.info("Done: " + command)
       else {
         logger.warn("Failed: " + command)

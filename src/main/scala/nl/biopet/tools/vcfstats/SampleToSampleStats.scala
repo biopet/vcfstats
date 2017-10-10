@@ -19,7 +19,8 @@ package nl.biopet.tools.vcfstats
   * @param genotypeOverlap Number of genotypes match with other sample
   * @param alleleOverlap Number of alleles also found in other sample
   */
-case class SampleToSampleStats(var genotypeOverlap: Int = 0, var alleleOverlap: Int = 0) {
+case class SampleToSampleStats(var genotypeOverlap: Int = 0,
+                               var alleleOverlap: Int = 0) {
 
   /** Add an other class */
   def +=(other: SampleToSampleStats) {

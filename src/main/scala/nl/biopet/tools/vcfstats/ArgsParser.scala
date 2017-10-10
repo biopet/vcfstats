@@ -25,8 +25,9 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
     else if (x.exists) success
     else failure(s"Output directory does not exist: $x")
   } text "Path to directory for output (required)"
-  opt[File]('i', "intervals") unbounded () valueName "<file>" action { (x, c) =>
-    c.copy(intervals = Some(x))
+  opt[File]('i', "intervals") unbounded () valueName "<file>" action {
+    (x, c) =>
+      c.copy(intervals = Some(x))
   } text "Path to interval (BED) file (optional)"
   opt[String]("infoTag") unbounded () valueName "<tag>" action { (x, c) =>
     c.copy(infoTags = x :: c.infoTags)
@@ -59,7 +60,8 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
     c.copy(sparkMaster = Some(x))
   } text s"Spark master to use"
   opt[String]("sparkExecutorMemory") unbounded () action { (x, c) =>
-    c.copy(sparkConfigValues = c.sparkConfigValues + ("spark.executor.memory" -> x))
+    c.copy(
+      sparkConfigValues = c.sparkConfigValues + ("spark.executor.memory" -> x))
   } text s"Spark executor memory to use"
   opt[(String, String)]("sparkConfigValue") unbounded () action { (x, c) =>
     c.copy(sparkConfigValues = c.sparkConfigValues + (x._1 -> x._2))

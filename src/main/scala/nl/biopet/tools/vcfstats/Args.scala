@@ -17,7 +17,7 @@ case class Args(inputFile: File = null,
                 notWriteContigStats: Boolean = false,
                 sparkMaster: Option[String] = None,
                 sparkConfigValues: Map[String, String] = Map(
-                          "spark.memory.fraction" -> "0.1",
-                          "spark.memory.storageFraction" -> "0.2"
-                        ),
+                  "spark.memory.fraction" -> "0.1",
+                  "spark.memory.storageFraction" -> "0.2"
+                ),
                 contigSampleOverlapPlots: Boolean = false)

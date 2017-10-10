@@ -22,8 +22,9 @@ import scala.collection.mutable
   * @param genotypeStats Stores all genotype relative stats
   * @param sampleToSample Stores sample to sample compare stats
   */
-case class SampleStats(genotypeStats: mutable.Map[String, mutable.Map[Any, Int]] = mutable.Map(),
-                       sampleToSample: Array[SampleToSampleStats] = Array()) {
+case class SampleStats(
+    genotypeStats: mutable.Map[String, mutable.Map[Any, Int]] = mutable.Map(),
+    sampleToSample: Array[SampleToSampleStats] = Array()) {
 
   /** Add an other class */
   def +=(other: SampleStats): Unit = {

@@ -219,12 +219,15 @@ object VcfStats extends ToolCommand {
       for (record <- query if record.getStart <= samInterval.getEnd) {
         Stats.mergeNestedStatsMap(stats.generalStats,
                                   checkGeneral(record, adInfoTags))
-        for (sample1 <- samples.zipWithIndex) yield {
+        val compareSamples = cmdArgs.sampleToSampleMinDepth.map { dp =>
+          samples.zipWithIndex.filter(sample => record.getGenotype(sample._2).getDP >= dp)
+        }.getOrElse(samples.zipWithIndex)
+        for (sample1 <- compareSamples) yield {
           val genotype = record.getGenotype(sample1._2)
           Stats.mergeNestedStatsMap(
             stats.samplesStats(sample1._2).genotypeStats,
             checkGenotype(record, genotype, adGenotypeTags))
-          for (sample2 <- samples.zipWithIndex) {
+          for (sample2 <- compareSamples) {
             val genotype2 = record.getGenotype(sample2._2)
             if (genotype.getAlleles == genotype2.getAlleles)
               stats
@@ -282,16 +285,9 @@ object VcfStats extends ToolCommand {
   }
 
   val defaultGenotypeFields =
-    List("DP",
-         "GQ",
-         "AD",
-         "AD-ref",
-         "AD-alt",
-         "AD-used",
-         "AD-not_used",
-         "general")
+    List("general")
 
-  val defaultInfoFields = List("QUAL", "general", "AC", "AF", "AN", "DP")
+  val defaultInfoFields = List("general")
 
   val sampleDistributions = List("Het",
                                  "HetNonRef",

@@ -20,4 +20,5 @@ case class Args(inputFile: File = null,
                   "spark.memory.fraction" -> "0.1",
                   "spark.memory.storageFraction" -> "0.2"
                 ),
-                contigSampleOverlapPlots: Boolean = false)
+                contigSampleOverlapPlots: Boolean = false,
+                sampleToSampleMinDepth: Option[Int] = None)

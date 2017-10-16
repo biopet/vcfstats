@@ -9,12 +9,12 @@ dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
 
-libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1.0-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "biopet-ngs-utils" % "0.1.0-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "biopet-spark-utils" % "0.1.0-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "biopet-config-utils" % "0.1.0-SNAPSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-tool-utils" % "0.1-SNAPTSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-ngs-utils" % "0.1-SNAPTSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-spark-utils" % "0.1-SNAPTSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "biopet-config-utils" % "0.1-SNAPTSHOT" changing()
 
-libraryDependencies += "com.github.biopet" %% "biopet-test-utils" % "0.1.0-SNAPSHOT" % Test changing()
+libraryDependencies += "com.github.biopet" %% "biopet-test-utils" % "0.1-SNAPTSHOT" % Test changing()
 
 mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 

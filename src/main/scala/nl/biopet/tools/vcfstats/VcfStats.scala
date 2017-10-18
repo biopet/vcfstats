@@ -6,7 +6,7 @@ import java.net.URLClassLoader
 import htsjdk.variant.variantcontext.{Genotype, VariantContext}
 import htsjdk.variant.vcf.VCFFileReader
 import nl.biopet.utils.IoUtils
-import nl.biopet.utils.ngs.VcfUtils
+import nl.biopet.utils.ngs.vcf
 import nl.biopet.utils.ngs.intervals.{BedRecord, BedRecordList}
 import nl.biopet.utils.tool.ToolCommand
 import org.apache.spark.{SparkConf, SparkContext}
@@ -234,7 +234,7 @@ object VcfStats extends ToolCommand {
             stats
               .samplesStats(sample1._2)
               .sampleToSample(sample2._2)
-              .alleleOverlap += VcfUtils
+              .alleleOverlap += vcf
               .alleleOverlap(genotype.getAlleles.toList,
                              genotype2.getAlleles.toList)
           }

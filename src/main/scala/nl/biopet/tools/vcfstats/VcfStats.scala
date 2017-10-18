@@ -1,15 +1,15 @@
 package nl.biopet.tools.vcfstats
 
 import java.io.File
-import java.net.URLClassLoader
 
 import htsjdk.variant.variantcontext.{Genotype, VariantContext}
 import htsjdk.variant.vcf.VCFFileReader
 import nl.biopet.utils.IoUtils
 import nl.biopet.utils.ngs.vcf
+import nl.biopet.utils.spark
 import nl.biopet.utils.ngs.intervals.{BedRecord, BedRecordList}
 import nl.biopet.utils.tool.ToolCommand
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkContext
 import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
 
 import scala.collection.mutable
@@ -62,19 +62,8 @@ object VcfStats extends ToolCommand {
 
     logger.info("Init spark context")
 
-    val jars = ClassLoader.getSystemClassLoader
-      .asInstanceOf[URLClassLoader]
-      .getURLs
-      .map(_.getFile)
-      .filter(_.endsWith(".jar"))
-    val conf = cmdArgs.sparkConfigValues.foldLeft(
-      new SparkConf()
-        .setExecutorEnv(sys.env.toArray)
-        .setAppName(toolName)
-        .setMaster(
-          cmdArgs.sparkMaster.getOrElse(s"local[${cmdArgs.localThreads}]"))
-        .setJars(jars))((a, b) => a.set(b._1, b._2))
-    val sc = new SparkContext(conf)
+    implicit val sc: SparkContext = spark.loadSparkContext(toolName, master = cmdArgs.sparkMaster, localThreads = cmdArgs.localThreads, sparkConfig = cmdArgs.sparkConfigValues)
+
     logger.info("Spark context is up")
 
     val regions = (cmdArgs.intervals match {

@@ -9,6 +9,8 @@ import nl.biopet.utils.ngs.vcf
 import nl.biopet.utils.spark
 import nl.biopet.utils.ngs.intervals.{BedRecord, BedRecordList}
 import nl.biopet.utils.tool.ToolCommand
+import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkContext
 import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
 
@@ -25,148 +27,87 @@ object VcfStats extends ToolCommand {
       parser.parse(args, Args()).getOrElse(throw new IllegalArgumentException)
 
     logger.info("Start")
+    logger.info("Init spark context")
 
-    val reader = new VCFFileReader(cmdArgs.inputFile, true)
-    val header = reader.getFileHeader
-    val samples = header.getSampleNamesInOrder.toList
+    implicit val sc: SparkContext = spark.loadSparkContext(toolName, master = cmdArgs.sparkMaster, localThreads = cmdArgs.localThreads, sparkConfig = cmdArgs.sparkConfigValues)
+    
+    logger.info("Spark context is up")
 
+    val cmdArgsBroadcast = sc.broadcast(cmdArgs)
+
+    val reader = new VCFFileReader(cmdArgsBroadcast.value.inputFile, true)
+    val header = sc.broadcast(reader.getFileHeader)
+    val samples = sc.broadcast(header.value.getSampleNamesInOrder.toList)
     reader.close()
 
-    val adInfoTags = {
-      (for (infoTag <- cmdArgs.infoTags
+    val adInfoTags = sc.broadcast {
+      (for (infoTag <- cmdArgsBroadcast.value.infoTags
             if !defaultInfoFields.contains(infoTag)) yield {
-        require(header.getInfoHeaderLine(infoTag) != null,
-                "Info tag '" + infoTag + "' not found in header of vcf file")
+        require(header.value.getInfoHeaderLine(infoTag) != null,
+          "Info tag '" + infoTag + "' not found in header of vcf file")
         infoTag
-      }) ::: (for (line <- header.getInfoHeaderLines if cmdArgs.allInfoTags
+      }) ::: (for (line <- header.value.getInfoHeaderLines if cmdArgsBroadcast.value.allInfoTags
                    if !defaultInfoFields.contains(line.getID)
-                   if !cmdArgs.infoTags.contains(line.getID)) yield {
+                   if !cmdArgsBroadcast.value.infoTags.contains(line.getID)) yield {
         line.getID
       }).toList ::: defaultInfoFields
     }
 
-    val adGenotypeTags = (for (genotypeTag <- cmdArgs.genotypeTags
-                               if !defaultGenotypeFields.contains(genotypeTag))
-      yield {
-        require(
-          header.getFormatHeaderLine(genotypeTag) != null,
-          "Format tag '" + genotypeTag + "' not found in header of vcf file")
-        genotypeTag
-      }) ::: (for (line <- header.getFormatHeaderLines
-                   if cmdArgs.allGenotypeTags
-                   if !defaultGenotypeFields.contains(line.getID)
-                   if !cmdArgs.genotypeTags.contains(line.getID)
-                   if line.getID != "PL") yield {
-      line.getID
-    }).toList ::: defaultGenotypeFields
-
-    logger.info("Init spark context")
-
-    implicit val sc: SparkContext = spark.loadSparkContext(toolName, master = cmdArgs.sparkMaster, localThreads = cmdArgs.localThreads, sparkConfig = cmdArgs.sparkConfigValues)
-
-    logger.info("Spark context is up")
-
-    val regions = (cmdArgs.intervals match {
-      case Some(i) =>
-        BedRecordList.fromFile(i).validateContigs(cmdArgs.referenceFile)
-      case _ => BedRecordList.fromReference(cmdArgs.referenceFile)
-    }).combineOverlap
-      .scatter(cmdArgs.binSize,
-               maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
-    val nonEmptyRegions = BedRecordList
-      .fromList(
-        sc.parallelize(regions, regions.size)
-          .flatMap(filterEmptyBins(_, cmdArgs))
-          .collect())
-      .scatter(cmdArgs.binSize,
-               maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
-
-    val contigs = nonEmptyRegions.flatMap(_.map(_.chr))
-
-    val bigContigs =
-      nonEmptyRegions.filter(_.size == 1).flatten.groupBy(_.chr).map {
-        case (_, r) =>
-          val rdds = r
-            .grouped(10)
-            .map(
-              g =>
-                sc.parallelize(g.map(List(_)), g.size)
-                  .flatMap(
-                    readBins(_, samples, cmdArgs, adInfoTags, adGenotypeTags))
-                  .reduceByKey(_ += _)
-                  .repartition(1))
-            .toList
-
-          val steps = Math.log10(rdds.size).ceil.toInt
-          val lastRdds = (1 until steps)
-            .foldLeft(rdds) {
-              case (a, _) =>
-                if (a.size > 10)
-                  a.grouped(10)
-                    .map { g =>
-                      sc.union(g)
-                        .reduceByKey(_ += _)
-                        .repartition(1)
-                    }
-                    .toList
-                else a
-            }
-          if (lastRdds.size > 1) {
-            sc.union(lastRdds)
-              .reduceByKey(_ += _)
-              .repartition(1)
-          } else lastRdds.head
-      }
-    val smallContigs = nonEmptyRegions.filter(_.size > 1).map { r =>
-      sc.parallelize(r.map(List(_)), r.size)
-        .flatMap(readBins(_, samples, cmdArgs, adInfoTags, adGenotypeTags))
-        .reduceByKey(_ += _)
-        .cache()
+    val adGenotypeTags = sc.broadcast {
+      (for (genotypeTag <- cmdArgsBroadcast.value.genotypeTags
+            if !defaultGenotypeFields.contains(genotypeTag))
+        yield {
+          require(
+            header.value.getFormatHeaderLine(genotypeTag) != null,
+            "Format tag '" + genotypeTag + "' not found in header of vcf file")
+          genotypeTag
+        }) ::: (for (line <- header.value.getFormatHeaderLines
+                     if cmdArgsBroadcast.value.allGenotypeTags
+                     if !defaultGenotypeFields.contains(line.getID)
+                     if !cmdArgsBroadcast.value.genotypeTags.contains(line.getID)
+                     if line.getID != "PL") yield {
+        line.getID
+      }).toList ::: defaultGenotypeFields
     }
 
-    val contigsRdd = sc.union(smallContigs ++ bigContigs).cache
+    val sdBroadCast = sc.broadcast(sampleDistributions)
+
+    val regions = (cmdArgsBroadcast.value.intervals match {
+      case Some(i) =>
+        BedRecordList.fromFile(i).validateContigs(cmdArgsBroadcast.value.referenceFile)
+      case _ => BedRecordList.fromReference(cmdArgsBroadcast.value.referenceFile)
+    }).combineOverlap.scatter(cmdArgsBroadcast.value.binSize,
+      maxContigsInSingleJob = Some(cmdArgsBroadcast.value.maxContigsInSingleJob))
+
+    val contigs = sc.broadcast(regions.flatMap(_.map(_.chr)).distinct)
+
+    val contigsRdd = nonEmptyRegions(regions, cmdArgs.inputFile)
+      .flatMap(readBins(_, samples, cmdArgsBroadcast, adInfoTags.value, adGenotypeTags.value))
+      .reduceByKey(_ += _)
 
     val totalRdd = (contigsRdd
       .map("total" -> _._2) ++ sc.parallelize(
-      List("total" -> Stats.emptyStats(samples)),
+      List("total" -> Stats.emptyStats(samples.value)),
       1))
       .reduceByKey(_ += _)
       .cache()
 
     val totalJson = totalRdd.map {
       case (_, stats) =>
-        val json = stats.asJson(samples,
-                                adGenotypeTags,
-                                adInfoTags,
-                                sampleDistributions)
-        val outputFile = new File(cmdArgs.outputDir, "total.json")
-        stats.writeOverlap(cmdArgs.outputDir, samples)
-        IoUtils.writeLinesToFile(outputFile, Json.stringify(json) :: Nil)
-        json
+        writeStats(stats, samples, cmdArgsBroadcast, adInfoTags, adGenotypeTags, sdBroadCast)
     }
 
     val contigJsons = contigsRdd.map {
       case (contig, stats) =>
-        val json = stats.asJson(samples,
-                                adGenotypeTags,
-                                adInfoTags,
-                                sampleDistributions)
-        val outputFile =
-          new File(
-            cmdArgs.outputDir,
-            "contigs" + File.separator + contig + File.separator + s"$contig.json")
-        outputFile.getParentFile.mkdirs()
-        stats.writeOverlap(outputFile.getParentFile, samples)
-        IoUtils.writeLinesToFile(outputFile, Json.stringify(json) :: Nil)
-        contig -> json
+        contig -> writeStats(stats, samples, cmdArgsBroadcast, adInfoTags, adGenotypeTags, sdBroadCast, Some(contig))
     }
 
     val totalJsonFuture = totalJson.collectAsync()
     val contigsJsonsFuture: Future[Map[String, JsValue]] =
-      if (!cmdArgs.notWriteContigStats) contigJsons.collectAsync().map(_.toMap)
+      if (!cmdArgsBroadcast.value.notWriteContigStats) contigJsons.collectAsync().map(_.toMap)
       else {
         contigJsons.count()
-        Future.successful(contigs.map(_ -> JsNull).toMap)
+        Future.successful(contigs.value.map(_ -> JsNull).toMap)
       }
     val result = JsObject(
       Map(
@@ -174,16 +115,43 @@ object VcfStats extends ToolCommand {
         "contigs" -> JsObject(Await.result(contigsJsonsFuture, Duration.Inf))
       ))
 
-    IoUtils.writeLinesToFile(new File(cmdArgs.outputDir, "stats.json"),
+    IoUtils.writeLinesToFile(new File(cmdArgsBroadcast.value.outputDir, "stats.json"),
                              Json.stringify(result) :: Nil)
 
     sc.stop
     logger.info("Done")
   }
 
+  def nonEmptyRegions(regions: List[List[BedRecord]],
+                      inputFile: File)(implicit sc: SparkContext): RDD[List[BedRecord]] = {
+    sc.parallelize(regions, regions.size)
+      .map(filterEmptyBins(_, inputFile))
+      .filter(_.nonEmpty)
+  }
+
+  def writeStats(stats: Stats,
+                 samples: Broadcast[List[String]],
+                 cmdArgs: Broadcast[Args],
+                 adInfoTags: Broadcast[List[String]],
+                 adGenotypeTags: Broadcast[List[String]],
+                 sdBroadCast: Broadcast[List[String]],
+                 contig: Option[String] = None): JsObject = {
+    val json = stats.asJson(samples.value,
+      adGenotypeTags.value,
+      adInfoTags.value,
+      sdBroadCast.value)
+    val outputFile = contig
+      .map(c => new File(cmdArgs.value.outputDir, "contigs" + File.separator + c + File.separator + s"$c.json"))
+      .getOrElse(new File(cmdArgs.value.outputDir, "total.json"))
+    outputFile.getParentFile.mkdirs()
+    stats.writeOverlap(cmdArgs.value.outputDir, samples.value)
+    IoUtils.writeLinesToFile(outputFile, Json.stringify(json) :: Nil)
+    json
+  }
+
   def readBin(bedRecord: BedRecord,
               samples: List[String],
-              cmdArgs: Args,
+              cmdArgsBroadcast: Args,
               adInfoTags: List[String],
               adGenotypeTags: List[String],
               reader: VCFFileReader): Option[Stats] = {
@@ -208,12 +176,15 @@ object VcfStats extends ToolCommand {
       for (record <- query if record.getStart <= samInterval.getEnd) {
         Stats.mergeNestedStatsMap(stats.generalStats,
                                   checkGeneral(record, adInfoTags))
-        for (sample1 <- samples.zipWithIndex) yield {
+        val compareSamples = cmdArgsBroadcast.sampleToSampleMinDepth.map { dp =>
+          samples.zipWithIndex.filter(sample => record.getGenotype(sample._2).getDP >= dp)
+        }.getOrElse(samples.zipWithIndex)
+        for (sample1 <- compareSamples) yield {
           val genotype = record.getGenotype(sample1._2)
           Stats.mergeNestedStatsMap(
             stats.samplesStats(sample1._2).genotypeStats,
             checkGenotype(record, genotype, adGenotypeTags))
-          for (sample2 <- samples.zipWithIndex) {
+          for (sample2 <- compareSamples) {
             val genotype2 = record.getGenotype(sample2._2)
             if (genotype.getAlleles == genotype2.getAlleles)
               stats
@@ -237,14 +208,14 @@ object VcfStats extends ToolCommand {
   }
 
   def readBins(bedRecords: List[BedRecord],
-               samples: List[String],
-               cmdArgs: Args,
+               samples: Broadcast[List[String]],
+               cmdArgsBroadcast: Broadcast[Args],
                adInfoTags: List[String],
                adGenotypeTags: List[String]): List[(String, Stats)] = {
-    val reader = new VCFFileReader(cmdArgs.inputFile, true)
+    val reader = new VCFFileReader(cmdArgsBroadcast.value.inputFile, true)
 
     val stats = for (bedRecord <- bedRecords) yield {
-      readBin(bedRecord, samples, cmdArgs, adInfoTags, adGenotypeTags, reader)
+      readBin(bedRecord, samples.value, cmdArgsBroadcast.value, adInfoTags, adGenotypeTags, reader)
         .map(bedRecord.chr -> _)
     }
     reader.close()
@@ -253,8 +224,8 @@ object VcfStats extends ToolCommand {
   }
 
   def filterEmptyBins(bedRecords: List[BedRecord],
-                      cmdArgs: Args): List[BedRecord] = {
-    val reader = new VCFFileReader(cmdArgs.inputFile, true)
+                      inputFile: File): List[BedRecord] = {
+    val reader = new VCFFileReader(inputFile, true)
 
     val stats = for (bedRecord <- bedRecords) yield {
       val samInterval = bedRecord.toSamInterval
@@ -271,16 +242,9 @@ object VcfStats extends ToolCommand {
   }
 
   val defaultGenotypeFields =
-    List("DP",
-         "GQ",
-         "AD",
-         "AD-ref",
-         "AD-alt",
-         "AD-used",
-         "AD-not_used",
-         "general")
+    List("general")
 
-  val defaultInfoFields = List("QUAL", "general", "AC", "AF", "AN", "DP")
+  val defaultInfoFields = List("general")
 
   val sampleDistributions = List("Het",
                                  "HetNonRef",

@@ -41,6 +41,9 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[Unit]("allGenotypeTags") unbounded () action { (_, c) =>
     c.copy(allGenotypeTags = true)
   } text "Summarize all genotype tags. Default false"
+  opt[Int]("sampleToSampleMinDepth") unbounded () action { (x, c) =>
+    c.copy(sampleToSampleMinDepth = Some(x))
+  } text "Minimal depth require to consider sample to sample comparison"
   opt[Int]("binSize") unbounded () action { (x, c) =>
     c.copy(binSize = x)
   } text "Binsize in estimated base pairs"

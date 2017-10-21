@@ -17,7 +17,7 @@ package nl.biopet.tools.vcfstats
 import java.io.{File, FileOutputStream, IOException, PrintWriter}
 
 import nl.biopet.utils.Logging
-import nl.biopet.utils.config.Conversions
+import nl.biopet.utils.conversions
 import nl.biopet.utils.sortAnyAny
 import play.api.libs.json.{JsObject, Json}
 
@@ -174,7 +174,7 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] =
              genotypeFields: List[String],
              infoFields: List[String],
              sampleDistributions: List[String]): JsObject = {
-    Conversions.mapToJson(
+    conversions.mapToJson(
       getStatsAsMap(samples, genotypeFields, infoFields, sampleDistributions))
   }
 
@@ -206,8 +206,8 @@ case class Stats(generalStats: mutable.Map[String, mutable.Map[Any, Int]] =
                                  infoFields,
                                  sampleDistributions)
     val json = contig match {
-      case Some(c) => Conversions.mapToJson(Map("contigs" -> Map(c -> map)))
-      case _ => Conversions.mapToJson(Map("total" -> map))
+      case Some(c) => conversions.mapToJson(Map("contigs" -> Map(c -> map)))
+      case _ => conversions.mapToJson(Map("total" -> map))
     }
     allWriter.println(Json.stringify(json))
     allWriter.close()

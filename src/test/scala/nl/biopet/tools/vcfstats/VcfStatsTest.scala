@@ -12,13 +12,6 @@ class VcfStatsTest extends BiopetTest {
 
   System.setProperty("spark.driver.host", "localhost")
 
-  @Test
-  def testNoArgs(): Unit = {
-    intercept[IllegalArgumentException] {
-      VcfStats.main(Array())
-    }
-  }
-
   @DataProvider(name = "executables")
   def executables(): Array[Array[AnyRef]] = {
     Array(Array(VcfStats), Array(VcfStatsSpark))
@@ -58,6 +51,13 @@ class VcfStatsTest extends BiopetTest {
       contigDir.list().toList.sorted shouldBe contigs.sorted
       contigs.foreach(c => testDir(new File(contigDir, c)))
     } else contigDir should exist
+  }
+
+  @Test(dataProvider = "executables")
+  def testNoArgs(executable: ToolCommand): Unit = {
+    intercept[IllegalArgumentException] {
+      executable.main(Array())
+    }
   }
 
   @Test(dataProvider = "executables")
@@ -104,6 +104,18 @@ class VcfStatsTest extends BiopetTest {
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
     testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
+
+  @Test(dataProvider = "executables")
+  def testMasterArg(executable: ToolCommand): Unit = {
+    val tmp = Files.createTempDirectory("vcfStats")
+    val vcf = resourcePath("/chrQ.vcf.gz")
+    val ref = resourcePath("/fake_chrQ.fa")
+
+    noException should be thrownBy executable.main(
+      Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString, "--sparkMaster", "local[1]"))
+    testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
+  }
+
 
   @Test(dataProvider = "executables")
   def testEmptyVcf(executable: ToolCommand): Unit = {

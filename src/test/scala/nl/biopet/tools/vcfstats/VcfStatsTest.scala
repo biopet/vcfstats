@@ -4,10 +4,14 @@ import java.io.File
 import java.nio.file.Files
 
 import nl.biopet.test.BiopetTest
+import nl.biopet.utils.tool.ToolCommand
 import org.apache.commons.io.FileUtils
-import org.testng.annotations.Test
+import org.testng.annotations.{DataProvider, Test}
 
 class VcfStatsTest extends BiopetTest {
+
+  System.setProperty("spark.driver.host", "localhost")
+
   @Test
   def testNoArgs(): Unit = {
     intercept[IllegalArgumentException] {
@@ -15,120 +19,100 @@ class VcfStatsTest extends BiopetTest {
     }
   }
 
-  @Test
-  def testNoExistOutputDir(): Unit = {
+  @DataProvider(name = "executables")
+  def executables(): Array[Array[AnyRef]] = {
+    Array(Array(VcfStats), Array(VcfStatsSpark))
+  }
+
+  def testOutput(outputDir: File,
+                 skipGeneral: Boolean = false,
+                 skipGenotype: Boolean = false,
+                 skipSampleCompare: Boolean = false,
+                 skipContigStats: Boolean = false,
+                 contigs: List[String] = Nil): Unit = {
+    def testDir(dir: File): Unit = {
+      dir should exist
+      val general = new File(dir, "general.tsv")
+      if (skipGeneral) general shouldNot exist
+      else general should exist
+      val genotype = new File(dir, "genotype.tsv")
+      if (skipGenotype) genotype shouldNot exist
+      else genotype should exist
+
+      val sampleCompareDir = new File(dir, "sample_compare")
+      if (skipSampleCompare) sampleCompareDir shouldNot exist
+      else {
+        sampleCompareDir should exist
+        new File(sampleCompareDir, "allele.abs.tsv") should exist
+        new File(sampleCompareDir, "allele.rel.tsv") should exist
+        new File(sampleCompareDir, "genotype.abs.tsv") should exist
+        new File(sampleCompareDir, "genotype.rel.tsv") should exist
+      }
+    }
+
+    testDir(outputDir)
+
+    val contigDir = new File(outputDir, "contigs")
+    if (skipContigStats) {
+      contigDir shouldNot exist
+      contigDir.list().toList.sorted shouldBe contigs.sorted
+      contigs.foreach(c => testDir(new File(contigDir, c)))
+    } else contigDir should exist
+  }
+
+  @Test(dataProvider = "executables")
+  def testNoExistOutputDir(executable: ToolCommand): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     FileUtils.deleteDirectory(new File(tmp.toAbsolutePath.toString))
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
     intercept[IllegalArgumentException] {
-      VcfStats.main(Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
+      executable.main(Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
     }.getMessage shouldBe s"requirement failed: ${tmp.toAbsolutePath.toString} does not exist"
   }
 
-  @Test
-  def testOutputDirNoDir(): Unit = {
+  @Test(dataProvider = "executables")
+  def testOutputDirNoDir(executable: ToolCommand): Unit = {
     val tmp = File.createTempFile("vcfstats.", ".vcfstats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
     intercept[IllegalArgumentException] {
-      VcfStats.main(Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath))
+      executable.main(Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath))
     }.getMessage shouldBe s"requirement failed: ${tmp.getAbsolutePath} is not a directory"
   }
 
-  @Test
-  def testMultiBins(): Unit = {
+  @Test(dataProvider = "executables")
+  def testMultiBins(executable: ToolCommand): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy executable.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString, "--binSize", "1000"))
+    testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
 
-  @Test
-  def testMain(): Unit = {
+  @Test(dataProvider = "executables")
+  def testMain(executable: ToolCommand): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy executable.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
-    noException should be thrownBy VcfStats.main(
-      Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString, "--allInfoTags"))
-    noException should be thrownBy VcfStats.main(
-      Array("-I",
-        vcf,
-        "-R",
-        ref,
-        "-o",
-        tmp.toAbsolutePath.toString,
-        "--allInfoTags",
-        "--allGenotypeTags"))
-    noException should be thrownBy VcfStats.main(
-      Array("-I",
-        vcf,
-        "-R",
-        ref,
-        "-o",
-        tmp.toAbsolutePath.toString,
-        "--binSize",
-        "50",
-        "--writeBinStats"))
-
-    // returns null when validation fails
-    def validateArgs(array: Array[String]): Option[Args] = {
-      val argsParser = new ArgsParser("nl/biopet/tools/vcfstats")
-      argsParser.parse(array, Args())
-    }
-
-    val stderr1 = new java.io.ByteArrayOutputStream
-    Console.withErr(stderr1) {
-      validateArgs(
-        Array("-I",
-          vcf,
-          "-R",
-          ref,
-          "-o",
-          tmp.toAbsolutePath.toString,
-          "--binSize",
-          "50",
-          "--writeBinStats",
-          "--genotypeWiggle",
-          "NonexistentThing")) shouldBe empty
-    }
-
-    val stderr2 = new java.io.ByteArrayOutputStream
-    Console.withErr(stderr2) {
-      validateArgs(
-        Array("-I",
-          vcf,
-          "-R",
-          ref,
-          "-o",
-          tmp.toAbsolutePath.toString,
-          "--binSize",
-          "50",
-          "--writeBinStats",
-          "--generalWiggle",
-          "NonexistentThing")) shouldBe empty
-    }
-
-    val stderr3 = new java.io.ByteArrayOutputStream
-    Console.withErr(stderr3) {
-      validateArgs(Array("-R", ref, "-o", tmp.toAbsolutePath.toString)) shouldBe empty
-    }
+    testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
 
-  @Test
-  def testEmptyVcf(): Unit = {
+  @Test(dataProvider = "executables")
+  def testEmptyVcf(executable: ToolCommand): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/empty.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy executable.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
+    testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
 }

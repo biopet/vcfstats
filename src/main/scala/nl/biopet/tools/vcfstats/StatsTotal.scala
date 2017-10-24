@@ -29,6 +29,11 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
   def writeStats(outputDir: File): Unit = {
     general.foreach(_.writeToTsv(new File(outputDir, "general.tsv")))
     genotype.foreach(_.writeToTsv(new File(outputDir, "genotype.tsv")))
+    sampleCompare.foreach { x =>
+      val dir = new File(outputDir, "sample_compare")
+      dir.mkdir()
+      x.writeAllFiles(dir)
+    }
   }
 }
 

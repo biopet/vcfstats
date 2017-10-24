@@ -23,8 +23,20 @@ class VcfStatsSparkTest extends BiopetTest {
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    an[IllegalArgumentException] should be thrownBy VcfStatsSpark.main(
-      Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
+    intercept[IllegalArgumentException] {
+      VcfStatsSpark.main(Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
+    }.getMessage shouldBe s"requirement failed: ${tmp.toAbsolutePath.toString} does not exist"
+  }
+
+  @Test
+  def testOutputDirNoDir(): Unit = {
+    val tmp = File.createTempFile("vcfstats.", ".vcfstats")
+    val vcf = resourcePath("/chrQ.vcf.gz")
+    val ref = resourcePath("/fake_chrQ.fa")
+
+    intercept[IllegalArgumentException] {
+      VcfStatsSpark.main(Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath))
+    }.getMessage shouldBe s"requirement failed: ${tmp.getAbsolutePath} is not a directory"
   }
 
   @Test

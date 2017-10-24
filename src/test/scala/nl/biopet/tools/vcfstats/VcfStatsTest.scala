@@ -43,6 +43,16 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test
+  def testMultiBins(): Unit = {
+    val tmp = Files.createTempDirectory("vcfStats")
+    val vcf = resourcePath("/chrQ.vcf.gz")
+    val ref = resourcePath("/fake_chrQ.fa")
+
+    noException should be thrownBy VcfStats.main(
+      Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString, "--binSize", "1000"))
+  }
+
+  @Test
   def testMain(): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")

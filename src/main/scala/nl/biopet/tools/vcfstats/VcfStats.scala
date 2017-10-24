@@ -2,10 +2,8 @@ package nl.biopet.tools.vcfstats
 
 import java.io.File
 
-import htsjdk.variant.variantcontext.VariantContext
-import htsjdk.variant.vcf.{VCFFileReader, VCFHeader}
+import htsjdk.variant.vcf.VCFFileReader
 import nl.biopet.utils.ngs.intervals.{BedRecord, BedRecordList}
-import nl.biopet.utils.ngs.vcf
 import nl.biopet.utils.tool.ToolCommand
 
 import scala.collection.JavaConversions._

@@ -4,7 +4,6 @@ import java.io.File
 import java.nio.file.Files
 
 import nl.biopet.test.BiopetTest
-import nl.biopet.utils.sortAnyAny
 import org.apache.commons.io.FileUtils
 import org.testng.annotations.Test
 

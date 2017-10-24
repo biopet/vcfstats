@@ -31,10 +31,10 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   } text "Path to interval (BED) file (optional)"
   opt[String]("infoTag") unbounded () valueName "<tag>" action { (x, c) =>
     c.copy(infoTags = x :: c.infoTags)
-  } text s"Summarize these info tags. Default is (${VcfStats.defaultInfoFields.mkString(", ")})"
+  } text s"Summarize these info tags"
   opt[String]("genotypeTag") unbounded () valueName "<tag>" action { (x, c) =>
     c.copy(genotypeTags = x :: c.genotypeTags)
-  } text s"Summarize these genotype tags. Default is (${VcfStats.defaultGenotypeFields.mkString(", ")})"
+  } text s"Summarize these genotype tags"
   opt[Unit]("allInfoTags") unbounded () action { (_, c) =>
     c.copy(allInfoTags = true)
   } text "Summarize all info tags. Default false"

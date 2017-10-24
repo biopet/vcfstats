@@ -3,19 +3,16 @@ package nl.biopet.tools.vcfstats
 import java.io.File
 import java.nio.file.Files
 
-import htsjdk.variant.vcf.VCFFileReader
 import nl.biopet.test.BiopetTest
+import nl.biopet.utils.sortAnyAny
 import org.apache.commons.io.FileUtils
 import org.testng.annotations.Test
-import nl.biopet.utils.sortAnyAny
 
-import scala.collection.mutable
-
-class VcfStatsTest extends BiopetTest {
+class VcfStatsSparkTest extends BiopetTest {
   @Test
   def testNoArgs(): Unit = {
     intercept[IllegalArgumentException] {
-      VcfStats.main(Array())
+      VcfStatsSpark.main(Array())
     }
   }
 
@@ -26,7 +23,7 @@ class VcfStatsTest extends BiopetTest {
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    an[IllegalArgumentException] should be thrownBy VcfStats.main(
+    an[IllegalArgumentException] should be thrownBy VcfStatsSpark.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
   }
 
@@ -36,11 +33,11 @@ class VcfStatsTest extends BiopetTest {
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy VcfStatsSpark.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy VcfStatsSpark.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString, "--allInfoTags"))
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy VcfStatsSpark.main(
       Array("-I",
         vcf,
         "-R",
@@ -49,7 +46,7 @@ class VcfStatsTest extends BiopetTest {
         tmp.toAbsolutePath.toString,
         "--allInfoTags",
         "--allGenotypeTags"))
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy VcfStatsSpark.main(
       Array("-I",
         vcf,
         "-R",
@@ -110,7 +107,7 @@ class VcfStatsTest extends BiopetTest {
     val vcf = resourcePath("/empty.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    noException should be thrownBy VcfStats.main(
+    noException should be thrownBy VcfStatsSpark.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
   }
 

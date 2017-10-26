@@ -4,6 +4,7 @@ import java.io.File
 import java.nio.file.Files
 
 import nl.biopet.test.BiopetTest
+import nl.biopet.utils.ngs.vcf.GenotypeStats
 import nl.biopet.utils.tool.ToolCommand
 import org.apache.commons.io.FileUtils
 import org.testng.annotations.{DataProvider, Test}
@@ -20,6 +21,7 @@ class VcfStatsTest extends BiopetTest {
   def testOutput(outputDir: File,
                  skipGeneral: Boolean = false,
                  skipGenotype: Boolean = false,
+                 skipSampleDistributions: Boolean = false,
                  skipSampleCompare: Boolean = false,
                  skipContigStats: Boolean = false,
                  contigs: List[String] = Nil): Unit = {
@@ -31,6 +33,16 @@ class VcfStatsTest extends BiopetTest {
       val genotype = new File(dir, "genotype.tsv")
       if (skipGenotype) genotype shouldNot exist
       else genotype should exist
+
+      val sampleDistribution = new File(dir, "sample_distributions")
+      if (skipSampleDistributions) sampleDistribution shouldNot exist
+      else {
+        sampleDistribution should exist
+        GenotypeStats.values.foreach { x =>
+          new File(sampleDistribution, s"$x.tsv") should exist
+          new File(sampleDistribution, s"$x.aggregate.tsv") should exist
+        }
+      }
 
       val sampleCompareDir = new File(dir, "sample_compare")
       if (skipSampleCompare) sampleCompareDir shouldNot exist
@@ -113,8 +125,8 @@ class VcfStatsTest extends BiopetTest {
 
     noException should be thrownBy executable.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString,
-        "--skipGeneral", "--skipGenotype", "--skipSampleCompare"))
-    testOutput(tmp.toFile, contigs = "chrQ" :: Nil, skipGeneral = true, skipGenotype = true, skipSampleCompare = true)
+        "--skipGeneral", "--skipGenotype", "--skipSampleCompare", "--skipSampleDistributions"))
+    testOutput(tmp.toFile, contigs = "chrQ" :: Nil, skipGeneral = true, skipGenotype = true, skipSampleDistributions = true, skipSampleCompare = true)
   }
 
   @Test(dataProvider = "executables")

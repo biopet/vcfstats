@@ -61,6 +61,9 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[Unit]("skipGenotype") unbounded () action { (_, c) =>
     c.copy(skipGenotype = true)
   } text s"Skipping genotype stats"
+  opt[Unit]("skipSampleDistributions") unbounded () action { (_, c) =>
+    c.copy(skipSampleDistributions = true)
+  } text s"Skipping sample distributions stats"
   opt[Unit]("skipSampleCompare") unbounded () action { (_, c) =>
     c.copy(skipSampleCompare = true)
   } text s"Skipping sample compare"

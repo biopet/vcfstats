@@ -25,4 +25,5 @@ case class Args(inputFile: File = null,
                 sampleToSampleMinDepth: Option[Int] = None,
                 skipGeneral: Boolean = false,
                 skipGenotype: Boolean = false,
+                skipSampleDistributions: Boolean = false,
                 skipSampleCompare: Boolean = false)

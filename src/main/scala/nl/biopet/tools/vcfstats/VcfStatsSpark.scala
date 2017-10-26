@@ -5,7 +5,7 @@ import java.io.File
 import htsjdk.variant.variantcontext.VariantContext
 import htsjdk.variant.vcf.{VCFFileReader, VCFHeader}
 import nl.biopet.utils.ngs.intervals.BedRecord
-import nl.biopet.utils.ngs.vcf.{GeneralStats, GenotypeStats, SampleCompare}
+import nl.biopet.utils.ngs.vcf.{GeneralStats, GenotypeStats, SampleCompare, SampleDistributions}
 import nl.biopet.utils.spark
 import nl.biopet.utils.tool.ToolCommand
 import org.apache.spark.SparkContext
@@ -63,15 +63,19 @@ object VcfStatsSpark extends ToolCommand {
       val generalStatsFutures =
         if (cmdArgs.skipGeneral) Nil
         else
-          generalStats(vcfRecords, header, cmdArgsBroadcast, regions)
+          generalStats(vcfRecords, cmdArgsBroadcast, regions)
       val genotypeStatsFutures =
         if (cmdArgs.skipGenotype) Nil
         else
           genotypeStats(vcfRecords, header, cmdArgsBroadcast, regions)
+      val sampleDistributionFutures =
+        if (cmdArgs.skipGeneral) Nil
+        else
+          sampleDistribution(vcfRecords, cmdArgsBroadcast, regions)
 
       Await.result(
         Future.sequence(
-          sampleCompareFutures ::: generalStatsFutures ::: genotypeStatsFutures),
+          sampleCompareFutures ::: generalStatsFutures ::: sampleDistributionFutures ::: genotypeStatsFutures),
         Duration.Inf)
     } finally {
       sc.stop()
@@ -93,7 +97,6 @@ object VcfStatsSpark extends ToolCommand {
   }
 
   def generalStats(vcfRecords: RDD[VariantContext],
-                   header: Broadcast[VCFHeader],
                    cmdArgs: Broadcast[Args],
                    regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
     vcfRecords.sparkContext.setJobGroup("General stats", "General stats")
@@ -143,6 +146,34 @@ object VcfStatsSpark extends ToolCommand {
     } else Nil
     vcfRecords.sparkContext.clearJobGroup()
     genotypeTotal :: contigFutures
+  }
+
+  def sampleDistribution(vcfRecords: RDD[VariantContext],
+                   cmdArgs: Broadcast[Args],
+                   regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
+    vcfRecords.sparkContext.setJobGroup("Sample Distribution", "Sample Distribution")
+    val generalContig = spark.vcf.sampleDistributions(vcfRecords, regions)
+    val generalTotal = generalContig
+      .map("total" -> _._2)
+      .union(vcfRecords.sparkContext.parallelize(
+        List("total" -> new SampleDistributions())))
+      .reduceByKey(_ += _)
+      .foreachAsync{ x =>
+        val dir = new File(cmdArgs.value.outputDir, "sample_distributions")
+        dir.mkdir()
+        x._2.writeToDir(dir)
+      }
+
+    val contigFutures = if (!cmdArgs.value.notWriteContigStats) {
+      List(generalContig.foreachAsync {
+        case (contig, stats) =>
+          val dir = contigDir(cmdArgs.value.outputDir, contig + File.separator + "sample_distributions")
+          dir.mkdirs()
+          stats.writeToDir(dir)
+      })
+    } else Nil
+    vcfRecords.sparkContext.clearJobGroup()
+    generalTotal :: contigFutures
   }
 
   def sampleCompare(

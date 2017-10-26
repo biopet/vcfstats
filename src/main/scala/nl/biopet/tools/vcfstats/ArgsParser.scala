@@ -55,6 +55,15 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[Unit]("notWriteContigStats") unbounded () action { (_, c) =>
     c.copy(notWriteContigStats = true)
   } text s"Number of local threads to use"
+  opt[Unit]("skipGeneral") unbounded () action { (_, c) =>
+    c.copy(skipGeneral = true)
+  } text s"Skipping general stats"
+  opt[Unit]("skipGenotype") unbounded () action { (_, c) =>
+    c.copy(skipGenotype = true)
+  } text s"Skipping genotype stats"
+  opt[Unit]("skipSampleCompare") unbounded () action { (_, c) =>
+    c.copy(skipSampleCompare = true)
+  } text s"Skipping sample compare"
   opt[String]("sparkMaster") unbounded () action { (x, c) =>
     c.copy(sparkMaster = Some(x))
   } text s"Spark master to use"

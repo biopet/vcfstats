@@ -22,4 +22,7 @@ case class Args(inputFile: File = null,
                   "spark.rpc.message.maxSize" -> "500"
                 ),
                 contigSampleOverlapPlots: Boolean = false,
-                sampleToSampleMinDepth: Option[Int] = None)
+                sampleToSampleMinDepth: Option[Int] = None,
+                skipGeneral: Boolean = false,
+                skipGenotype: Boolean = false,
+                skipSampleCompare: Boolean = false)

@@ -7,9 +7,10 @@ import htsjdk.variant.vcf.VCFHeader
 import nl.biopet.utils.ngs.vcf
 import nl.biopet.utils.ngs.vcf.SampleCompare
 
-case class StatsTotal(general: Option[vcf.GeneralStats],
-                      genotype: Option[vcf.GenotypeStats],
-                      sampleCompare: Option[SampleCompare]) { //TODO: add more Collectors
+case class StatsTotal(
+    general: Option[vcf.GeneralStats],
+    genotype: Option[vcf.GenotypeStats],
+    sampleCompare: Option[SampleCompare]) { //TODO: add more Collectors
   def addRecord(record: VariantContext, cmdArgs: Args): Unit = {
     general.foreach(_.addRecord(record))
     genotype.foreach(_.addRecord(record))
@@ -39,6 +40,11 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
 
 object StatsTotal {
   def empty(header: VCFHeader, cmdArgs: Args): StatsTotal = {
-    StatsTotal(Some(new vcf.GeneralStats), Some(new vcf.GenotypeStats(header)), Some(new SampleCompare(header)))
+    if (cmdArgs.skipGeneral) None else Some(new vcf.GeneralStats)
+    StatsTotal(
+      if (cmdArgs.skipGeneral) None else Some(new vcf.GeneralStats),
+      if (cmdArgs.skipGenotype) None else Some(new vcf.GenotypeStats(header)),
+      if (cmdArgs.skipSampleCompare) None else Some(new SampleCompare(header))
+    )
   }
 }

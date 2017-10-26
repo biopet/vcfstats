@@ -106,6 +106,18 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
+  def testSkips(executable: ToolCommand): Unit = {
+    val tmp = Files.createTempDirectory("vcfStats")
+    val vcf = resourcePath("/chrQ.vcf.gz")
+    val ref = resourcePath("/fake_chrQ.fa")
+
+    noException should be thrownBy executable.main(
+      Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString,
+        "--skipGeneral", "--skipGenotype", "--skipSampleCompare"))
+    testOutput(tmp.toFile, contigs = "chrQ" :: Nil, skipGeneral = true, skipGenotype = true, skipSampleCompare = true)
+  }
+
+  @Test(dataProvider = "executables")
   def testMasterArg(executable: ToolCommand): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")

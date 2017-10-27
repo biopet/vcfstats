@@ -9,11 +9,11 @@ dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
 
-libraryDependencies += "com.github.biopet" %% "tool-utils" % "0.1-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "ngs-utils" % "0.1-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.1-SNAPSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "tool-utils" % "0.1"
+libraryDependencies += "com.github.biopet" %% "ngs-utils" % "0.1"
+libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.1"
 
-libraryDependencies += "com.github.biopet" %% "test-utils" % "0.1-SNAPSHOT" % Test changing()
+libraryDependencies += "com.github.biopet" %% "test-utils" % "0.1" % Test
 
 mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
@@ -29,6 +29,10 @@ publishTo := {
 
 import ReleaseTransformations._
 releaseProcess := Seq[ReleaseStep](
+  releaseStepCommand("git fetch"),
+  releaseStepCommand("git checkout master"),
+  releaseStepCommand("git pull"),
+  releaseStepCommand("git merge origin/develop"),
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
@@ -37,9 +41,12 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   tagRelease,
   releaseStepCommand("publishSigned"),
+  releaseStepCommand("sonatypeReleaseAll"),
+  pushChanges,
+  releaseStepCommand("git checkout develop"),
+  releaseStepCommand("git merge master"),
   setNextVersion,
   commitNextVersion,
-  releaseStepCommand("sonatypeReleaseAll"),
   pushChanges
 )
 

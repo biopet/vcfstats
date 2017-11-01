@@ -20,7 +20,9 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.JavaConversions._
 
-object VcfStats extends ToolCommand {
+object VcfStats extends ToolCommand[Args] {
+  def emptyArgs: Args = Args()
+  def argsParser = new ArgsParser(toolName)
   def main(args: Array[String]): Unit = {
     val parser = new ArgsParser(toolName)
     val cmdArgs =

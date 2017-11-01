@@ -4,14 +4,15 @@ import java.io.File
 import java.nio.file.Files
 
 import htsjdk.variant.vcf.VCFFileReader
-import nl.biopet.test.BiopetTest
+import nl.biopet.utils.test.tools.ToolTest
 import org.apache.commons.io.FileUtils
 import org.testng.annotations.Test
 import nl.biopet.utils.sortAnyAny
 
 import scala.collection.mutable
 
-class VcfStatsTest extends BiopetTest {
+class VcfStatsTest extends ToolTest[Args] {
+  def toolCommand: VcfStats.type = VcfStats
   @Test
   def testNoArgs(): Unit = {
     intercept[IllegalArgumentException] {

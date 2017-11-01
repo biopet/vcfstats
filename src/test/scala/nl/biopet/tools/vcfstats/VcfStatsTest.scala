@@ -12,6 +12,7 @@ import nl.biopet.utils.sortAnyAny
 import scala.collection.mutable
 
 class VcfStatsTest extends ToolTest[Args] {
+  def toolCommand: VcfStats.type = VcfStats
   @Test
   def testNoArgs(): Unit = {
     intercept[IllegalArgumentException] {

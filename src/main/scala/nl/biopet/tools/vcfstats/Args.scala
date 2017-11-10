@@ -17,8 +17,6 @@ case class Args(inputFile: File = null,
                 notWriteContigStats: Boolean = false,
                 sparkMaster: Option[String] = None,
                 sparkConfigValues: Map[String, String] = Map(
-                  "spark.memory.fraction" -> "0.1",
-                  "spark.memory.storageFraction" -> "0.2",
                   "spark.rpc.message.maxSize" -> "500"
                 ),
                 contigSampleOverlapPlots: Boolean = false,

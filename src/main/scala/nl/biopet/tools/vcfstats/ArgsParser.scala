@@ -26,17 +26,11 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
       c.copy(intervals = Some(x))
   } text "Path to interval (BED) file (optional)"
   opt[String]("infoTag") unbounded () valueName "<tag>" action { (x, c) =>
-    c.copy(infoTags = x :: c.infoTags)
+    c.copy(infoTags = VcfField.fromArg(x) :: c.infoTags)
   } text s"Summarize these info tags"
   opt[String]("genotypeTag") unbounded () valueName "<tag>" action { (x, c) =>
-    c.copy(genotypeTags = x :: c.genotypeTags)
+    c.copy(genotypeTags = VcfField.fromArg(x) :: c.genotypeTags)
   } text s"Summarize these genotype tags"
-  opt[Unit]("allInfoTags") unbounded () action { (_, c) =>
-    c.copy(allInfoTags = true)
-  } text "Summarize all info tags. Default false"
-  opt[Unit]("allGenotypeTags") unbounded () action { (_, c) =>
-    c.copy(allGenotypeTags = true)
-  } text "Summarize all genotype tags. Default false"
   opt[Int]("sampleToSampleMinDepth") unbounded () action { (x, c) =>
     c.copy(sampleToSampleMinDepth = Some(x))
   } text "Minimal depth require to consider sample to sample comparison"

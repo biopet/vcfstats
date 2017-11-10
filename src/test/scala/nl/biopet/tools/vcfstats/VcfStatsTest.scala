@@ -9,13 +9,18 @@ import nl.biopet.utils.tool.ToolCommand
 import org.apache.commons.io.FileUtils
 import org.testng.annotations.{DataProvider, Test}
 
+import scala.io.Source
+
 class VcfStatsTest extends BiopetTest {
 
   System.setProperty("spark.driver.host", "localhost")
 
   @DataProvider(name = "executables")
   def executables(): Array[Array[AnyRef]] = {
-    Array(Array(VcfStats), Array(VcfStatsSpark))
+    Array(
+      Array(VcfStatsSpark),
+      Array(VcfStats)
+    )
   }
 
   def testOutput(outputDir: File,
@@ -150,5 +155,46 @@ class VcfStatsTest extends BiopetTest {
     noException should be thrownBy executable.main(
       Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
     testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
+  }
+
+  @Test(dataProvider = "executables")
+  def testInfoField(executable: ToolCommand[Args]): Unit = {
+    val tmp = Files.createTempDirectory("vcfStats").toFile
+    val vcf = resourcePath("/multi.vcf.gz")
+    val ref = resourcePath("/fake_chrQ.fa")
+
+    noException should be thrownBy executable.main(
+      Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath, "--infoTag", "DP:All"))
+    testOutput(tmp, contigs = "chrQ" :: Nil)
+
+    val tsv = new File(tmp, "info.DP_All.tsv")
+    tsv should exist
+    val lines = Source.fromFile(tsv).getLines().toList
+    lines.head shouldBe "value\tcount"
+    lines.tail shouldBe List(
+      "1\t3",
+      "2\t2",
+      "3\t1"
+    )
+  }
+
+  @Test(dataProvider = "executables")
+  def testGenotypeField(executable: ToolCommand[Args]): Unit = {
+    val tmp = Files.createTempDirectory("vcfStats").toFile
+    val vcf = resourcePath("/multi.vcf.gz")
+    val ref = resourcePath("/fake_chrQ.fa")
+
+    noException should be thrownBy executable.main(
+      Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath, "--genotypeTag", "DP:All"))
+    testOutput(tmp, contigs = "chrQ" :: Nil)
+
+    val tsv = new File(tmp, "genotype.DP_All.tsv")
+    tsv should exist
+    val lines = Source.fromFile(tsv).getLines().toList
+    lines.head shouldBe "Sample\tSample_3\tSample_2\tSample_1"
+    lines.tail shouldBe List(
+      "1\t0\t1\t1",
+      "5\t3\t2\t2"
+    )
   }
 }

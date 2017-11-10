@@ -59,24 +59,36 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
       val sampleCompareFutures =
         if (cmdArgs.skipSampleCompare) Nil
-        else
+        else {
           sampleCompare(vcfRecords, header, cmdArgsBroadcast, regions)
+        }
 
       val generalStatsFutures =
         if (cmdArgs.skipGeneral) Nil
-        else
+        else {
+          logger.info("Submitting generalStats jobs")
           generalStats(vcfRecords, cmdArgsBroadcast, regions)
+        }
       val genotypeStatsFutures =
         if (cmdArgs.skipGenotype) Nil
-        else
+        else {
+          logger.info("Submitting genotypeStats jobs")
           genotypeStats(vcfRecords, header, cmdArgsBroadcast, regions)
+        }
       val sampleDistributionFutures =
         if (cmdArgs.skipGeneral) Nil
-        else
+        else {
+          logger.info("Submitting sampleDistribution jobs")
           sampleDistribution(vcfRecords, cmdArgsBroadcast, regions)
+        }
 
+      logger.info("Submitting infoFieldCounts jobs")
       val infoCounts = infoFieldCounts(vcfRecords, header, cmdArgsBroadcast, regions)
+
+      logger.info("Submitting genotypeFieldCounts jobs")
       val genotypeCounts = genotypeFieldCounts(vcfRecords, header, cmdArgsBroadcast, regions)
+
+      logger.info("Done submitting jobs")
 
       Await.result(
         Future.sequence(

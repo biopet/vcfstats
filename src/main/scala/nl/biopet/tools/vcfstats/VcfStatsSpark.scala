@@ -19,13 +19,15 @@ import scala.concurrent.{Await, Future}
 object VcfStatsSpark extends ToolCommand[Args] {
 
   def emptyArgs: Args = Args()
+
   def argsParser = new ArgsParser(toolName)
+
   def main(args: Array[String]): Unit = {
     val cmdArgs = cmdArrayToArgs(args)
 
     require(cmdArgs.outputDir.exists(), s"${cmdArgs.outputDir} does not exist")
     require(cmdArgs.outputDir.isDirectory,
-            s"${cmdArgs.outputDir} is not a directory")
+      s"${cmdArgs.outputDir} is not a directory")
 
     mainFromArgs(cmdArgs)
   }
@@ -73,9 +75,13 @@ object VcfStatsSpark extends ToolCommand[Args] {
         else
           sampleDistribution(vcfRecords, cmdArgsBroadcast, regions)
 
+      val infoCounts = infoFieldCounts(vcfRecords, header, cmdArgsBroadcast, regions)
+      val genotypeCounts = genotypeFieldCounts(vcfRecords, header, cmdArgsBroadcast, regions)
+
       Await.result(
         Future.sequence(
-          sampleCompareFutures ::: generalStatsFutures ::: sampleDistributionFutures ::: genotypeStatsFutures),
+          sampleCompareFutures ::: generalStatsFutures ::: sampleDistributionFutures :::
+            genotypeStatsFutures ::: infoCounts ::: genotypeCounts),
         Duration.Inf)
     } finally {
       sc.stop()
@@ -88,7 +94,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
   def loadVcfFile(cmdArgs: Broadcast[Args],
                   regions: Broadcast[List[BedRecord]])(
-      implicit sc: SparkContext): RDD[VariantContext] = {
+                   implicit sc: SparkContext): RDD[VariantContext] = {
     sc.setJobGroup("Loading Vcf Records", "Loading Vcf Records")
     val vcfRecords = spark.vcf
       .loadRecords(cmdArgs.value.inputFile, regions)
@@ -122,10 +128,10 @@ object VcfStatsSpark extends ToolCommand[Args] {
   }
 
   def genotypeStats(
-      vcfRecords: RDD[VariantContext],
-      header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args],
-      regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
+                     vcfRecords: RDD[VariantContext],
+                     header: Broadcast[VCFHeader],
+                     cmdArgs: Broadcast[Args],
+                     regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
     vcfRecords.sparkContext.setJobGroup("Genotype stats", "Genotype stats")
     val genotypeContig = spark.vcf.genotypeStats(vcfRecords, header, regions)
     val genotypeTotal = genotypeContig
@@ -149,8 +155,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
   }
 
   def sampleDistribution(vcfRecords: RDD[VariantContext],
-                   cmdArgs: Broadcast[Args],
-                   regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
+                         cmdArgs: Broadcast[Args],
+                         regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
     vcfRecords.sparkContext.setJobGroup("Sample Distribution", "Sample Distribution")
     val generalContig = spark.vcf.sampleDistributions(vcfRecords, regions)
     val generalTotal = generalContig
@@ -158,7 +164,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
       .union(vcfRecords.sparkContext.parallelize(
         List("total" -> new SampleDistributions())))
       .reduceByKey(_ += _)
-      .foreachAsync{ x =>
+      .foreachAsync { x =>
         val dir = new File(cmdArgs.value.outputDir, "sample_distributions")
         dir.mkdir()
         x._2.writeToDir(dir)
@@ -177,16 +183,16 @@ object VcfStatsSpark extends ToolCommand[Args] {
   }
 
   def sampleCompare(
-      vcfRecords: RDD[VariantContext],
-      header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args],
-      regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
+                     vcfRecords: RDD[VariantContext],
+                     header: Broadcast[VCFHeader],
+                     cmdArgs: Broadcast[Args],
+                     regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
     vcfRecords.sparkContext.setJobGroup("Sample compare", "Sample compare")
     val contigCompare = spark.vcf
       .sampleCompare(vcfRecords,
-                     header,
-                     regions,
-                     cmdArgs.value.sampleToSampleMinDepth)
+        header,
+        regions,
+        cmdArgs.value.sampleToSampleMinDepth)
       .cache()
     val sampleCompareDir = new File(cmdArgs.value.outputDir, "sample_compare")
     sampleCompareDir.mkdir()
@@ -194,7 +200,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
       Some(contigCompare.foreachAsync {
         case (contig, compare) =>
           val dir = new File(contigDir(cmdArgs.value.outputDir, contig),
-                             "sample_compare")
+            "sample_compare")
           dir.mkdirs()
           compare.writeAllFiles(dir)
       })
@@ -211,5 +217,71 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
     vcfRecords.sparkContext.clearJobGroup()
     totalFuture :: contigFuture.toList
+  }
+
+  def infoFieldCounts(vcfRecords: RDD[VariantContext],
+                      header: Broadcast[VCFHeader],
+                      cmdArgs: Broadcast[Args],
+                      regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
+
+    val futures = for (tag <- cmdArgs.value.infoTags) yield {
+      val tagBroadcast = vcfRecords.sparkContext.broadcast(tag)
+      val contigCounts = spark.vcf.infoFieldCounts(vcfRecords, header, tagBroadcast, regions)
+      val contigFuture = if (!cmdArgs.value.notWriteContigStats) {
+        Some(contigCounts.foreachAsync {
+          case (contig, counts) =>
+            val file = new File(contigDir(cmdArgs.value.outputDir, contig),
+              s"info.${tagBroadcast.value}.tsv")
+            counts.writeHistogram(file)
+        })
+      } else None
+
+      val totalFuture = contigCounts
+        .map("total" -> _._2)
+        .union(vcfRecords.sparkContext.parallelize(
+          List("total" -> tagBroadcast.value.newInfoCount(header.value))))
+        .reduceByKey(_ += _)
+        .foreachAsync(_._2.writeHistogram(new File(cmdArgs.value.outputDir,
+          s"info.${tagBroadcast.value}.tsv")))
+
+      contigCounts.unpersist()
+
+      vcfRecords.sparkContext.clearJobGroup()
+      totalFuture :: contigFuture.toList
+    }
+    futures.flatten
+  }
+
+  def genotypeFieldCounts(vcfRecords: RDD[VariantContext],
+                          header: Broadcast[VCFHeader],
+                          cmdArgs: Broadcast[Args],
+                          regions: Broadcast[List[BedRecord]]): List[Future[Unit]] = {
+
+    val futures = for (tag <- cmdArgs.value.genotypeTags) yield {
+      val tagBroadcast = vcfRecords.sparkContext.broadcast(tag)
+      val contigCounts = spark.vcf.genotypeFieldCounts(vcfRecords, header, tagBroadcast, regions)
+      val contigFuture = if (!cmdArgs.value.notWriteContigStats) {
+        Some(contigCounts.foreachAsync {
+          case (contig, counts) =>
+            val file = new File(contigDir(cmdArgs.value.outputDir, contig),
+              s"genotype.${tagBroadcast.value}.tsv")
+            counts.writeToFile(file)
+        })
+      } else None
+
+      val totalFuture = contigCounts
+        .map("total" -> _._2)
+        .union(vcfRecords.sparkContext.parallelize(
+          List("total" -> tagBroadcast.value.newGenotypeCount(header.value))))
+        .reduceByKey(_ += _)
+        .foreachAsync(_._2.writeToFile(new File(cmdArgs.value.outputDir,
+          s"genotype.${tagBroadcast.value}.tsv")))
+
+      contigCounts.unpersist()
+
+      vcfRecords.sparkContext.clearJobGroup()
+      totalFuture :: contigFuture.toList
+    }
+    futures.flatten
   }
 }

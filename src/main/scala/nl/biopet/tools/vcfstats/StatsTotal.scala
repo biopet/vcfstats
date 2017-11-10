@@ -5,14 +5,14 @@ import java.io.File
 import htsjdk.variant.variantcontext.VariantContext
 import htsjdk.variant.vcf.VCFHeader
 import nl.biopet.utils.ngs.vcf
-import nl.biopet.utils.ngs.vcf.{GenotypeFieldCounts, InfoFieldCounts, SampleCompare, SampleDistributions}
+import nl.biopet.utils.ngs.vcf.{GenotypeFieldCounts, InfoFieldCounts, SampleCompare, SampleDistributions, VcfField}
 
 case class StatsTotal(general: Option[vcf.GeneralStats],
                       genotype: Option[vcf.GenotypeStats],
                       sampleDistributions: Option[SampleDistributions],
                       sampleCompare: Option[SampleCompare],
-                      infoFields: Map[VcfField, InfoFieldCounts],
-                      genotypeFields: Map[VcfField, GenotypeFieldCounts]) {
+                      infoFields: Map[vcf.VcfField, InfoFieldCounts],
+                      genotypeFields: Map[vcf.VcfField, GenotypeFieldCounts]) {
   def addRecord(record: VariantContext, cmdArgs: Args): Unit = {
     general.foreach(_.addRecord(record))
     genotype.foreach(_.addRecord(record))

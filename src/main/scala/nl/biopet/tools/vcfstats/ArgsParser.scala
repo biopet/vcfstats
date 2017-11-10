@@ -4,6 +4,8 @@ import java.io.File
 
 import nl.biopet.utils.tool.AbstractOptParser
 
+import nl.biopet.utils.ngs.vcf.VcfField
+
 class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[File]('I', "inputFile") required () unbounded () maxOccurs 1 valueName "<file>" action {
     (x, c) =>

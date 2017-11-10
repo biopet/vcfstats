@@ -2,6 +2,8 @@ package nl.biopet.tools.vcfstats
 
 import java.io.File
 
+import nl.biopet.utils.ngs.vcf.VcfField
+
 case class Args(inputFile: File = null,
                 outputDir: File = null,
                 referenceFile: File = null,

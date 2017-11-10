@@ -8,12 +8,12 @@ import nl.biopet.utils.tool.ToolCommand
 
 import scala.collection.JavaConversions._
 
-object VcfStats extends ToolCommand {
+object VcfStats extends ToolCommand[Args] {
 
+  def emptyArgs: Args = Args()
+  def argsParser = new ArgsParser(toolName)
   def main(args: Array[String]): Unit = {
-    val parser = new ArgsParser(toolName)
-    val cmdArgs =
-      parser.parse(args, Args()).getOrElse(throw new IllegalArgumentException)
+    val cmdArgs = cmdArrayToArgs(args)
 
     require(cmdArgs.outputDir.exists(), s"${cmdArgs.outputDir} does not exist")
     require(cmdArgs.outputDir.isDirectory,

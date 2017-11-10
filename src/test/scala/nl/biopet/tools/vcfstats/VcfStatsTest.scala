@@ -66,14 +66,14 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
-  def testNoArgs(executable: ToolCommand): Unit = {
+  def testNoArgs(executable: ToolCommand[Args]): Unit = {
     intercept[IllegalArgumentException] {
       executable.main(Array())
     }
   }
 
   @Test(dataProvider = "executables")
-  def testNoExistOutputDir(executable: ToolCommand): Unit = {
+  def testNoExistOutputDir(executable: ToolCommand[Args]): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     FileUtils.deleteDirectory(new File(tmp.toAbsolutePath.toString))
     val vcf = resourcePath("/chrQ.vcf.gz")
@@ -85,7 +85,7 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
-  def testOutputDirNoDir(executable: ToolCommand): Unit = {
+  def testOutputDirNoDir(executable: ToolCommand[Args]): Unit = {
     val tmp = File.createTempFile("vcfstats.", ".vcfstats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -96,7 +96,7 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
-  def testMultiBins(executable: ToolCommand): Unit = {
+  def testMultiBins(executable: ToolCommand[Args]): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -107,7 +107,7 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
-  def testMain(executable: ToolCommand): Unit = {
+  def testMain(executable: ToolCommand[Args]): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -118,7 +118,7 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
-  def testSkips(executable: ToolCommand): Unit = {
+  def testSkips(executable: ToolCommand[Args]): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -130,7 +130,7 @@ class VcfStatsTest extends BiopetTest {
   }
 
   @Test(dataProvider = "executables")
-  def testMasterArg(executable: ToolCommand): Unit = {
+  def testMasterArg(executable: ToolCommand[Args]): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -142,7 +142,7 @@ class VcfStatsTest extends BiopetTest {
 
 
   @Test(dataProvider = "executables")
-  def testEmptyVcf(executable: ToolCommand): Unit = {
+  def testEmptyVcf(executable: ToolCommand[Args]): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/empty.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")

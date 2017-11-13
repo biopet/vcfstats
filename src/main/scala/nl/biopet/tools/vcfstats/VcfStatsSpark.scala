@@ -77,6 +77,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     logger.info("Done")
   }
 
+  /** This is a class to collect results from 1 chunk */
   case class ChunkResult(contigFuture: Future[Any],
                          generalStats: Option[RDD[(String, GeneralStats)]],
                          genotypeStats: Option[RDD[(String, GenotypeStats)]],
@@ -85,6 +86,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
                          infoFieldCounts: Map[VcfField, RDD[(String, InfoFieldCounts)]],
                          genotypeFieldCounts: Map[VcfField, RDD[(String, GenotypeFieldCounts)]])
 
+  /** This method will execute a list of regions. */
   def processContig(regions: Broadcast[List[BedRecord]],
                     cmdArgs: Broadcast[Args],
                     header: Broadcast[VCFHeader],
@@ -118,9 +120,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
       infoCounts.map(x => x._1 -> x._2._2), genotypeCounts.map(x => x._1 -> x._2._2))
   }
 
+  /** Returns the contig dir of a given contig */
   def contigDir(outputDir: File, contig: String) =
     new File(outputDir, "contigs" + File.separator + contig)
 
+  /** This method will load a list of regions into memory */
   def loadVcfFile(cmdArgs: Broadcast[Args],
                   regions: Broadcast[List[BedRecord]],
                   prefixMessage: String)(

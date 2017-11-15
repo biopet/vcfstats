@@ -15,7 +15,7 @@ libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.2-SNAPSHOT" cha
 
 libraryDependencies += "com.github.biopet" %% "tool-test-utils" % "0.1-SNAPSHOT" % Test changing()
 
-mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStatsSpark")
+mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
 useGpg := true
 

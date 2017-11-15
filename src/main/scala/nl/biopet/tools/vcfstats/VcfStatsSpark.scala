@@ -132,6 +132,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     sc.setJobGroup(s"$prefixMessage Loading Vcf Records", s"$prefixMessage Loading Vcf Records")
     val vcfRecords = spark.vcf
       .loadRecords(cmdArgs.value.inputFile, regions, cached = true)
+    vcfRecords.countAsync()
     sc.clearJobGroup()
     vcfRecords
   }

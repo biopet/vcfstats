@@ -16,12 +16,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
+/**
+  * This tool can generate metrics from a vcf file.
+  * This version of the tool run on Apache Spark
+  * @author Peter van 't Hof
+  */
 object VcfStatsSpark extends ToolCommand[Args] {
 
   def emptyArgs: Args = Args()
 
   def argsParser = new ArgsParser(toolName)
 
+  /** Main entry point from the commandline */
   def main(args: Array[String]): Unit = {
     val cmdArgs = cmdArrayToArgs(args)
 
@@ -32,6 +38,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     mainFromArgs(cmdArgs)
   }
 
+  /** API entry point */
   def mainFromArgs(cmdArgs: Args): Unit = {
     logger.info("Start")
 
@@ -137,6 +144,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     vcfRecords
   }
 
+  /** This will generate contigs stats and write this if this is not disabled */
   def contigGeneralStats(vcfRecords: RDD[VariantContext],
                          cmdArgs: Broadcast[Args],
                          regions: Broadcast[List[BedRecord]],
@@ -159,6 +167,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     }
   }
 
+  /** This will combine contigs stats and write the output file */
   def totalGeneralStats(generalContig: List[RDD[(String, GeneralStats)]],
                         cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
     if (generalContig.nonEmpty) {
@@ -174,6 +183,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     } else None
   }
 
+  /** This will generate contigs stats and write this if this is not disabled */
   def contigGenotypeStats(vcfRecords: RDD[VariantContext],
                           header: Broadcast[VCFHeader],
                           cmdArgs: Broadcast[Args],
@@ -196,6 +206,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     }
   }
 
+  /** This will combine contigs stats and write the output file */
   def totalGenotypeStats(contigs: List[RDD[(String, GenotypeStats)]],
                          cmdArgs: Broadcast[Args],
                          header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
@@ -212,6 +223,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     } else None
   }
 
+  /** This will generate contigs stats and write this if this is not disabled */
   def contigSampleDistributions(vcfRecords: RDD[VariantContext],
                                 cmdArgs: Broadcast[Args],
                                 regions: Broadcast[List[BedRecord]],
@@ -232,6 +244,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     }
   }
 
+  /** This will combine contigs stats and write the output file */
   def totalSampleDistributions(contigs: List[RDD[(String, SampleDistributions)]],
                                cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
@@ -250,6 +263,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     } else None
   }
 
+  /** This will generate contigs stats and write this if this is not disabled */
   def contigSampleCompare(vcfRecords: RDD[VariantContext],
                           header: Broadcast[VCFHeader],
                           cmdArgs: Broadcast[Args],
@@ -277,6 +291,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     }
   }
 
+  /** This will combine contigs stats and write the output file */
   def totalSampleCompare(contigs: List[RDD[(String, SampleCompare)]],
                          cmdArgs: Broadcast[Args],
                          header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
@@ -297,6 +312,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
   }
 
+  /** This will generate contigs stats and write this if this is not disabled */
   def contigInfoFieldCounts(vcfRecords: RDD[VariantContext],
                             header: Broadcast[VCFHeader],
                             cmdArgs: Broadcast[Args],
@@ -319,7 +335,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
     }).toMap
   }
 
-  def totalContigInfoFieldCounts(contigs: Map[VcfField, List[RDD[(String, InfoFieldCounts)]]], 
+  /** This will combine contigs stats and write the output file */
+  def totalContigInfoFieldCounts(contigs: Map[VcfField, List[RDD[(String, InfoFieldCounts)]]],
                                  header: Broadcast[VCFHeader],
                                  cmdArgs: Broadcast[Args]): Option[Future[Any]] = {
     val futures: List[Future[Unit]] = (for ((field, counts) <- contigs) yield {
@@ -338,6 +355,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     else None
   }
 
+  /** This will generate contigs stats and write this if this is not disabled */
   def contigGenotypeFieldCounts(vcfRecords: RDD[VariantContext],
                             header: Broadcast[VCFHeader],
                             cmdArgs: Broadcast[Args],
@@ -360,6 +378,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
     }).toMap
   }
 
+  /** This will combine contigs stats and write the output file */
   def totalContigGenotypeFieldCounts(contigs: Map[VcfField, List[RDD[(String, GenotypeFieldCounts)]]],
                                      header: Broadcast[VCFHeader],
                                      cmdArgs: Broadcast[Args]): Option[Future[Any]] = {

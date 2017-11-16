@@ -8,10 +8,16 @@ import nl.biopet.utils.tool.ToolCommand
 
 import scala.collection.JavaConversions._
 
+/**
+  * This tool can generate metrics from a vcf file
+  * @author Peter van 't Hof
+  */
 object VcfStats extends ToolCommand[Args] {
 
   def emptyArgs: Args = Args()
   def argsParser = new ArgsParser(toolName)
+
+  /** Main entry point from the command line */
   def main(args: Array[String]): Unit = {
     val cmdArgs = cmdArrayToArgs(args)
 
@@ -23,6 +29,7 @@ object VcfStats extends ToolCommand[Args] {
     else mainFromArgs(cmdArgs)
   }
 
+  /** API entry point */
   def mainFromArgs(cmdArgs: Args): Unit = {
     val reader = new VCFFileReader(cmdArgs.inputFile, true)
     val header = reader.getFileHeader
@@ -44,6 +51,7 @@ object VcfStats extends ToolCommand[Args] {
     totalStats.writeStats(cmdArgs.outputDir)
   }
 
+  /** creates regions to analyse */
   def regions(cmdArgs: Args): List[BedRecord] = {
     (cmdArgs.intervals match {
       case Some(i) =>

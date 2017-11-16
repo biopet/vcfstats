@@ -5,7 +5,7 @@ import java.io.File
 import htsjdk.variant.variantcontext.VariantContext
 import htsjdk.variant.vcf.VCFHeader
 import nl.biopet.utils.ngs.vcf
-import nl.biopet.utils.ngs.vcf.{GenotypeFieldCounts, InfoFieldCounts, SampleCompare, SampleDistributions, VcfField}
+import nl.biopet.utils.ngs.vcf.{GenotypeFieldCounts, InfoFieldCounts, SampleCompare, SampleDistributions}
 
 case class StatsTotal(general: Option[vcf.GeneralStats],
                       genotype: Option[vcf.GenotypeStats],
@@ -13,6 +13,8 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
                       sampleCompare: Option[SampleCompare],
                       infoFields: Map[vcf.VcfField, InfoFieldCounts],
                       genotypeFields: Map[vcf.VcfField, GenotypeFieldCounts]) {
+
+  /** This method will add a single variantcontext to the stats object */
   def addRecord(record: VariantContext, cmdArgs: Args): Unit = {
     general.foreach(_.addRecord(record))
     genotype.foreach(_.addRecord(record))
@@ -22,6 +24,7 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
     genotypeFields.foreach(_._2.addRecord(record))
   }
 
+  /** This combines stats classes into this */
   def +=(other: StatsTotal): StatsTotal = {
     require(other.general.isDefined == this.general.isDefined)
     require(other.genotype.isDefined == this.genotype.isDefined)
@@ -36,6 +39,7 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
     this
   }
 
+  /** Writing output files to a given directory */
   def writeStats(outputDir: File): Unit = {
     general.foreach(_.writeToTsv(new File(outputDir, "general.tsv")))
     genotype.foreach(_.writeToTsv(new File(outputDir, "genotype.tsv")))
@@ -56,6 +60,12 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
 }
 
 object StatsTotal {
+  /**
+    * Creates a empty [[StatsTotal]] class instance
+    * @param header Vcf header
+    * @param cmdArgs Command line args from vcfstats
+    * @return
+    */
   def empty(header: VCFHeader, cmdArgs: Args): StatsTotal = {
     if (cmdArgs.skipGeneral) None else Some(new vcf.GeneralStats)
     StatsTotal(

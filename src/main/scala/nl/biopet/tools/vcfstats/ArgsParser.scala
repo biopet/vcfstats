@@ -4,6 +4,8 @@ import java.io.File
 
 import nl.biopet.utils.tool.AbstractOptParser
 
+import nl.biopet.utils.ngs.vcf.VcfField
+
 class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[File]('I', "inputFile") required () unbounded () maxOccurs 1 valueName "<file>" action {
     (x, c) =>
@@ -20,27 +22,17 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[File]('o', "outputDir") required () unbounded () maxOccurs 1 valueName "<file>" action {
     (x, c) =>
       c.copy(outputDir = x.getAbsoluteFile)
-  } validate { x =>
-    if (x == null) failure("Valid output directory required")
-    else if (x.exists) success
-    else failure(s"Output directory does not exist: $x")
   } text "Path to directory for output (required)"
   opt[File]('i', "intervals") unbounded () valueName "<file>" action {
     (x, c) =>
       c.copy(intervals = Some(x))
   } text "Path to interval (BED) file (optional)"
   opt[String]("infoTag") unbounded () valueName "<tag>" action { (x, c) =>
-    c.copy(infoTags = x :: c.infoTags)
-  } text s"Summarize these info tags. Default is (${VcfStats.defaultInfoFields.mkString(", ")})"
+    c.copy(infoTags = VcfField.fromArg(x) :: c.infoTags)
+  } text s"Summarize these info tags"
   opt[String]("genotypeTag") unbounded () valueName "<tag>" action { (x, c) =>
-    c.copy(genotypeTags = x :: c.genotypeTags)
-  } text s"Summarize these genotype tags. Default is (${VcfStats.defaultGenotypeFields.mkString(", ")})"
-  opt[Unit]("allInfoTags") unbounded () action { (_, c) =>
-    c.copy(allInfoTags = true)
-  } text "Summarize all info tags. Default false"
-  opt[Unit]("allGenotypeTags") unbounded () action { (_, c) =>
-    c.copy(allGenotypeTags = true)
-  } text "Summarize all genotype tags. Default false"
+    c.copy(genotypeTags = VcfField.fromArg(x) :: c.genotypeTags)
+  } text s"Summarize these genotype tags"
   opt[Int]("sampleToSampleMinDepth") unbounded () action { (x, c) =>
     c.copy(sampleToSampleMinDepth = Some(x))
   } text "Minimal depth require to consider sample to sample comparison"
@@ -59,6 +51,18 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[Unit]("notWriteContigStats") unbounded () action { (_, c) =>
     c.copy(notWriteContigStats = true)
   } text s"Number of local threads to use"
+  opt[Unit]("skipGeneral") unbounded () action { (_, c) =>
+    c.copy(skipGeneral = true)
+  } text s"Skipping general stats"
+  opt[Unit]("skipGenotype") unbounded () action { (_, c) =>
+    c.copy(skipGenotype = true)
+  } text s"Skipping genotype stats"
+  opt[Unit]("skipSampleDistributions") unbounded () action { (_, c) =>
+    c.copy(skipSampleDistributions = true)
+  } text s"Skipping sample distributions stats"
+  opt[Unit]("skipSampleCompare") unbounded () action { (_, c) =>
+    c.copy(skipSampleCompare = true)
+  } text s"Skipping sample compare"
   opt[String]("sparkMaster") unbounded () action { (x, c) =>
     c.copy(sparkMaster = Some(x))
   } text s"Spark master to use"

@@ -119,11 +119,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
     vcfRecords.unpersist()
 
-    val future = Future.sequence(
+    val contigOutputFuture = Future.sequence(
       sampleCompare._1.toList ::: generalStats._1.toList ::: sampleDistribution._1.toList :::
         genotypeStats._1.toList ::: infoCounts.flatMap(_._2._1).toList ::: genotypeCounts.flatMap(_._2._1).toList)
 
-    ChunkResult(future, generalStats._2, genotypeStats._2, sampleDistribution._2, sampleCompare._2,
+    ChunkResult(contigOutputFuture, generalStats._2, genotypeStats._2, sampleDistribution._2, sampleCompare._2,
       infoCounts.map(x => x._1 -> x._2._2), genotypeCounts.map(x => x._1 -> x._2._2))
   }
 
@@ -177,9 +177,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
         List("total" -> new GeneralStats()))
       Some(sc.union(emptyRdd :: generalContig)
         .map("total" -> _._2)
-        .reduceByKey(_ += _)
-        .foreachAsync(
-          _._2.writeToTsv(new File(cmdArgs.value.outputDir, "general.tsv"))))
+        .reduceByKey { case (a,b) => a += b }
+        .foreachAsync { case (_,stats) =>
+          stats.writeToTsv(new File(cmdArgs.value.outputDir, "general.tsv"))})
     } else None
   }
 

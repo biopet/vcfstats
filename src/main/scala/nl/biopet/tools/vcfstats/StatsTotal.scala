@@ -5,7 +5,12 @@ import java.io.File
 import htsjdk.variant.variantcontext.VariantContext
 import htsjdk.variant.vcf.VCFHeader
 import nl.biopet.utils.ngs.vcf
-import nl.biopet.utils.ngs.vcf.{GenotypeFieldCounts, InfoFieldCounts, SampleCompare, SampleDistributions}
+import nl.biopet.utils.ngs.vcf.{
+  GenotypeFieldCounts,
+  InfoFieldCounts,
+  SampleCompare,
+  SampleDistributions
+}
 
 case class StatsTotal(general: Option[vcf.GeneralStats],
                       genotype: Option[vcf.GenotypeStats],
@@ -28,11 +33,13 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
   def +=(other: StatsTotal): StatsTotal = {
     require(other.general.isDefined == this.general.isDefined)
     require(other.genotype.isDefined == this.genotype.isDefined)
-    require(other.sampleDistributions.isDefined == this.sampleDistributions.isDefined)
+    require(
+      other.sampleDistributions.isDefined == this.sampleDistributions.isDefined)
     require(other.sampleCompare.isDefined == this.sampleCompare.isDefined)
     other.general.foreach(o => this.general.foreach(_ += o))
     other.genotype.foreach(o => this.genotype.foreach(_ += o))
-    other.sampleDistributions.foreach(o => this.sampleDistributions.foreach(_ += o))
+    other.sampleDistributions.foreach(o =>
+      this.sampleDistributions.foreach(_ += o))
     other.sampleCompare.foreach(o => this.sampleCompare.foreach(_ += o))
     other.infoFields.foreach(o => this.infoFields(o._1) += o._2)
     other.genotypeFields.foreach(o => this.genotypeFields(o._1) += o._2)
@@ -54,12 +61,15 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
       x.writeAllFiles(dir)
     }
 
-    infoFields.foreach(x => x._2.writeHistogram(new File(outputDir, s"info.${x._1}.tsv")))
-    genotypeFields.foreach(x => x._2.writeToFile(new File(outputDir, s"genotype.${x._1}.tsv")))
+    infoFields.foreach(x =>
+      x._2.writeHistogram(new File(outputDir, s"info.${x._1}.tsv")))
+    genotypeFields.foreach(x =>
+      x._2.writeToFile(new File(outputDir, s"genotype.${x._1}.tsv")))
   }
 }
 
 object StatsTotal {
+
   /**
     * Creates a empty [[StatsTotal]] class instance
     * @param header Vcf header
@@ -71,7 +81,8 @@ object StatsTotal {
     StatsTotal(
       if (cmdArgs.skipGeneral) None else Some(new vcf.GeneralStats),
       if (cmdArgs.skipGenotype) None else Some(new vcf.GenotypeStats(header)),
-      if (cmdArgs.skipSampleDistributions) None else Some(new vcf.SampleDistributions),
+      if (cmdArgs.skipSampleDistributions) None
+      else Some(new vcf.SampleDistributions),
       if (cmdArgs.skipSampleCompare) None else Some(new SampleCompare(header)),
       cmdArgs.infoTags.map(x => x -> x.newInfoCount(header)).toMap,
       cmdArgs.genotypeTags.map(x => x -> x.newGenotypeCount(header)).toMap

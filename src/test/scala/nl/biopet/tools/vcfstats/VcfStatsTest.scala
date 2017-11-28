@@ -5,13 +5,16 @@ import java.nio.file.Files
 
 import nl.biopet.test.BiopetTest
 import nl.biopet.utils.ngs.vcf.GenotypeStats
+import nl.biopet.utils.test.tools.ToolTest
 import nl.biopet.utils.tool.ToolCommand
 import org.apache.commons.io.FileUtils
 import org.testng.annotations.{DataProvider, Test}
 
 import scala.io.Source
 
-class VcfStatsTest extends BiopetTest {
+class VcfStatsTest extends ToolTest[Args] {
+
+  def toolCommand: ToolCommand[Args] = VcfStats
 
   System.setProperty("spark.driver.host", "localhost")
 

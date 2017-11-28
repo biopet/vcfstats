@@ -328,7 +328,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
       val contigFutures = if (!cmdArgs.value.notWriteContigStats) {
         Some(contigs.foreachAsync {
           case (contig, stats) =>
-            val dir = new File(contigDir(cmdArgs.value.outputDir, contig), "sample_distributions")
+            val dir = new File(contigDir(cmdArgs.value.outputDir, contig),
+                               "sample_distributions")
             dir.mkdirs()
             stats.writeToDir(dir)
         })
@@ -544,4 +545,10 @@ object VcfStatsSpark extends ToolCommand[Args] {
     if (futures.nonEmpty) Some(Future.sequence(futures))
     else None
   }
+
+  def descriptionText: String = VcfStats.descriptionText
+
+  def manualText: String = VcfStats.manualText
+
+  def exampleText: String = VcfStats.exampleText
 }

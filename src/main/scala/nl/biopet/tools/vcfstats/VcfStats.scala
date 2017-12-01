@@ -90,21 +90,21 @@ object VcfStats extends ToolCommand[Args] {
     """.stripMargin
 
   def exampleText: String =
-    """
+    s"""
       | Default vcfstats run:
-      | java -jar <vcfstats_jar> -I <input_vcf> -o <output_dir> -R <reference_fasta>
+      | ${example("-I", "<input_vcf>", "-o", "<output_dir>", "-R", "<reference_fasta>")}
       |
       | Run only specific regions:
-      | java -jar <vcfstats_jar> -I <input_vcf> -o <output_dir> -R <reference_fasta> -i <bed_file>
+      | ${example("-I", "<input_vcf>", "-o", "<output_dir>", "-R", "<reference_fasta>", "--intervals", "<bed_file>")}
       |
       | Create a histogram of a info field, for the methods see the manual section:
-      | java -jar <vcfstats_jar> -I <input_vcf> -o <output_dir> -R <reference_fasta> --infoTag <tag_id>:<method>
+      | ${example("-I", "<input_vcf>", "-o", "<output_dir>", "-R", "<reference_fasta>", "--infoTag", "<tag_id>:All")}
       |
       | Create a histogram of a info field, for the methods see the manual section:
-      | java -jar <vcfstats_jar> -I <input_vcf> -o <output_dir> -R <reference_fasta> --genotypeTag <tag_id>:<method>
+      | ${example("-I", "<input_vcf>", "-o", "<output_dir>", "-R", "<reference_fasta>", "--genotypeTag", "<tag_id>:All")}
       |
       | Run vcfstats on spark. The arg `sparkExecutorMemory` can be changed what is suitable for your cluster, the rest of the spark configs can be changed with the arg `sparkConfigValue`:
-      | java -jar <vcfstats_jar> -I <input_vcf> -o <output_dir> -R <reference_fasta> --sparkMaster <spark_master> --sparkExecutorMemory 10g
+      | ${example("-I", "<input_vcf>", "-o", "<output_dir>", "-R", "<reference_fasta>", "--sparkMaster", "<spark_master>", "--sparkExecutorMemory", "10g")}
     """.stripMargin
 
 }

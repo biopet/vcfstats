@@ -10,13 +10,10 @@ node('local') {
             sh 'git submodule update --init --recursive'
         }
 
-        stage('Build') {
-            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors clean compile"
-        }
-
-        stage('Test') {
-            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors coverageOn assembly coverageReport"
+        stage('Build & Test') {
+            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors clean coverage test coverageReport coverageAggregate makeSite generateReadme assembly"
             sh "java -jar target/scala-2.11/*-assembly-*.jar -h"
+            sh "git diff --quiet --exit-code"
         }
 
         stage('Results') {
@@ -25,7 +22,7 @@ node('local') {
         }
 
         if (env.BRANCH_NAME == 'develop') stage('Publish') {
-            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors publishSigned"
+            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors publishSigned ghpagesPushSite"
         }
 
         if (currentBuild.result == null || "SUCCESS" == currentBuild.result) {

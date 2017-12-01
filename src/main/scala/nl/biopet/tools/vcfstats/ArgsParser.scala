@@ -9,14 +9,10 @@ import nl.biopet.utils.ngs.vcf.VcfField
 class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
   opt[File]('I', "inputFile") required () valueName "<file>" action { (x, c) =>
     c.copy(inputFile = x.getAbsoluteFile)
-  } validate { x =>
-    if (x.exists) success else failure("Input VCF required")
   } text "Input VCF file (required)"
   opt[File]('R', "referenceFile") required () valueName "<file>" action {
     (x, c) =>
       c.copy(referenceFile = x)
-  } validate { x =>
-    if (x.exists) success else failure("Reference file required")
   } text "Fasta reference which was used to call input VCF (required)"
   opt[File]('o', "outputDir") required () valueName "<file>" action { (x, c) =>
     c.copy(outputDir = x.getAbsoluteFile)

@@ -111,7 +111,6 @@
 -o &lt;output_dir&gt; \
 -R &lt;reference_fasta&gt;
 
-
 </code></pre>
         <p> Run only specific regions:</p>
         <pre><code>java -jar &lt;VcfStats_jar&gt; \
@@ -119,7 +118,6 @@
 -o &lt;output_dir&gt; \
 -R &lt;reference_fasta&gt; \
 --intervals &lt;bed_file&gt;
-
 
 </code></pre>
         <p> Create a histogram of a info field, for the methods see the manual section:</p>
@@ -129,7 +127,6 @@
 -R &lt;reference_fasta&gt; \
 --infoTag &lt;tag_id&gt;:All
 
-
 </code></pre>
         <p> Create a histogram of a info field, for the methods see the manual section:</p>
         <pre><code>java -jar &lt;VcfStats_jar&gt; \
@@ -137,7 +134,6 @@
 -o &lt;output_dir&gt; \
 -R &lt;reference_fasta&gt; \
 --genotypeTag &lt;tag_id&gt;:All
-
 
 </code></pre>
         <p> Run vcfstats on spark. The arg <code>sparkExecutorMemory</code> can be changed what is suitable for your cluster, the rest of the spark configs can be changed with the arg <code>sparkConfigValue</code>:</p>

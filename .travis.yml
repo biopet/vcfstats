@@ -2,8 +2,8 @@ language: scala
 scala:
   - 2.11.11
 script:
-  - sbt clean coverage test coverageReport coverageAggregate makeSite generateReadme &&
-    git diff --quiet --exit-code
+  - sbt clean coverage test coverageReport coverageAggregate makeSite generateReadme
+  - git diff --quiet --exit-code
 after_success:
   - sbt coveralls
   - bash <(curl -s https://codecov.io/bash)

@@ -78,13 +78,25 @@
 
         
         <h1 id="description" class="section">Description</h1>
-        <p> Vcfstats is a tool that can generate metrics from a vcf file.
-         - General stats (default, can be disabled)
-         - Genotype stats (default, can be disabled)
-         - Sample compare (default, can be disabled)
-         - Sample distributions (default, can be disabled)
-         - Field histograms</p>
-        <p> This tool can run locally single threaded but also on a Apache Spark cluster.</p>
+        <p> Vcfstats is a tool that can generate metrics from a vcf file.</p>
+        <ul>
+          <li>General stats (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Genotype stats (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Sample compare (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Sample distributions (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>
+            <p>Field histograms</p>
+            <p>This tool can run locally single threaded but also on a Apache Spark cluster.</p>
+          </li>
+        </ul>
         
         <h1 id="installation" class="section">Installation</h1>
         <p>VcfStats requires Java 8 to be installed on your device. Download Java 8
@@ -97,12 +109,22 @@
         <h1 id="manual" class="section">Manual</h1>
         <p> Almost all stats are default but can be disabled if required. When having a lot of samples the sample compare step if very intensive.</p>
         <p> The reference fasta should have at least a dict file next to it.</p>
-        <p> For the field histograms there are some methods to choose from. This method will be used to choose what value to report in the histogram if there multiple values. Some method require the value to be a Int or Double. If this is not the case an exception is thrown.
-         * Min, takes minimal number (Int or double required)
-         * Max, takes maximum number (Int or double required)
-         * Avg, calculates the average (Int or double required)
-         * All, returns all values as separated values
-         * Unique, returns all unique values as separated values</p>
+        <p> For the field histograms there are some methods to choose from. This method will be used to choose what value to report in the histogram if there multiple values. Some method require the value to be a Int or Double. If this is not the case an exception is thrown.</p>
+        <ul>
+          <li>Min, takes minimal number (Int or double required)</li>
+        </ul>
+        <ul>
+          <li>Max, takes maximum number (Int or double required)</li>
+        </ul>
+        <ul>
+          <li>Avg, calculates the average (Int or double required)</li>
+        </ul>
+        <ul>
+          <li>All, returns all values as separated values</li>
+        </ul>
+        <ul>
+          <li>Unique, returns all unique values as separated values</li>
+        </ul>
         
         <h2 id="example" class="section">Example</h2>
         <p> Default vcfstats run:</p>

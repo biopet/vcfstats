@@ -10,7 +10,7 @@ object Documentation {
     VcfStats.generateDocumentation(
       outputDirectory = docsDir,
       version = version,
-      redirect= redirect
+      redirect = redirect
     )
   }
 }

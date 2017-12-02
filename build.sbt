@@ -78,7 +78,6 @@ assemblyMergeStrategy in assembly := {
 }
 
 // Documentation stuff
-//TODO: Change these two variables
 val urlToolName="vcfstats"
 val classPrefix="nl.biopet.tools.vcfstats"
 

@@ -33,7 +33,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
   def emptyArgs: Args = Args()
 
-  def argsParser = new ArgsParser(toolName)
+  def argsParser = new ArgsParser(this)
 
   /** Main entry point from the commandline */
   def main(args: Array[String]): Unit = {
@@ -328,9 +328,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
       val contigFutures = if (!cmdArgs.value.notWriteContigStats) {
         Some(contigs.foreachAsync {
           case (contig, stats) =>
-            val dir =
-              contigDir(cmdArgs.value.outputDir,
-                        contig + File.separator + "sample_distributions")
+            val dir = new File(contigDir(cmdArgs.value.outputDir, contig),
+                               "sample_distributions")
             dir.mkdirs()
             stats.writeToDir(dir)
         })
@@ -438,8 +437,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
           val contigFuture = if (!cmdArgs.value.notWriteContigStats) {
             Some(contigCounts.foreachAsync {
               case (contig, counts) =>
-                val file = new File(contigDir(cmdArgs.value.outputDir, contig),
-                                    s"info.${tagBroadcast.value}.tsv")
+                val dir = contigDir(cmdArgs.value.outputDir, contig)
+                dir.mkdirs()
+                val file = new File(dir, s"info.${tagBroadcast.value}.tsv")
                 counts.writeHistogram(file)
             })
           } else None
@@ -502,8 +502,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
           val contigFuture = if (!cmdArgs.value.notWriteContigStats) {
             Some(contigCounts.foreachAsync {
               case (contig, counts) =>
-                val file = new File(contigDir(cmdArgs.value.outputDir, contig),
-                                    s"genotype.${tagBroadcast.value}.tsv")
+                val dir = contigDir(cmdArgs.value.outputDir, contig)
+                dir.mkdirs()
+                val file = new File(dir, s"genotype.${tagBroadcast.value}.tsv")
                 counts.writeToFile(file)
             })
           } else None
@@ -544,4 +545,10 @@ object VcfStatsSpark extends ToolCommand[Args] {
     if (futures.nonEmpty) Some(Future.sequence(futures))
     else None
   }
+
+  def descriptionText: String = VcfStats.descriptionText
+
+  def manualText: String = VcfStats.manualText
+
+  def exampleText: String = VcfStats.exampleText
 }

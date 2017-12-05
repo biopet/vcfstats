@@ -40,6 +40,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
+  releaseStepCommand("ghpagesPushSite"),
   releaseStepCommand("publishSigned"),
   releaseStepCommand("sonatypeReleaseAll"),
   pushChanges,
@@ -75,3 +76,76 @@ assemblyMergeStrategy in assembly := {
     }
   case _ => MergeStrategy.first
 }
+
+// Documentation stuff
+val urlToolName="vcfstats"
+val classPrefix="nl.biopet.tools.vcfstats"
+
+import LaikaKeys._
+enablePlugins(LaikaSitePlugin)
+enablePlugins(SiteScaladocPlugin)
+enablePlugins(GhpagesPlugin)
+enablePlugins(PreprocessPlugin)
+
+val docsDir: String="target/markdown/"
+val readme: String="./README.md"
+val ghpagesDir: String="target/gh"
+
+sourceDirectory in LaikaSite := file(docsDir)
+sourceDirectories in Laika := Seq((sourceDirectory in LaikaSite).value)
+rawContent in Laika := true
+
+git.remoteRepo := s"git@github.com:biopet/$urlToolName.git"
+ghpagesRepository := file(ghpagesDir)
+
+// Puts Scaladoc output in `in /api subfolder`
+
+siteSubdirName in SiteScaladoc := {
+  if (isSnapshot.value) {"develop/api"}
+  else s"${version.value}/api"
+}
+siteDirectory in Laika  := file("target/site")
+
+// FileFilter that only includes current version for deletion.
+// The redirector is also included for deletion if version is not a snapshot.
+includeFilter in ghpagesCleanSite := new FileFilter{
+  def accept(f: File) = {
+    println("path=" + f.getPath)
+    if (isSnapshot.value) {
+      f.getParent.contains("develop")
+    } else {
+      f.getPath.contains(s"${version.value}") ||
+        f.getPath == new java.io.File(ghpagesRepository.value, "index.html").getPath
+    }
+  }
+}
+lazy val generateDocs = taskKey[Unit]("Generate documentation files")
+lazy val generateReadme = taskKey[Unit]("Generate readme")
+
+generateDocs := {
+  import sbt.Attributed.data
+  val r = (runner in Runtime).value
+  val input = Seq("--generateDocs", s"outputDir=$docsDir,version=${version.value},release=${!isSnapshot.value}", version.value)
+  val classPath =  (fullClasspath in Runtime).value
+  r.run(
+    s"$classPrefix.${name.value}",
+    data(classPath),
+    input,
+    streams.value.log
+  ).foreach(sys.error)
+}
+generateReadme := {
+  import sbt.Attributed.data
+  val r: ScalaRun = (runner in Runtime).value
+  val input = Seq("--generateReadme", readme)
+  val classPath =  (fullClasspath in Runtime).value
+  r.run(
+    s"$classPrefix.${name.value}",
+    data(classPath),
+    input,
+    streams.value.log
+  ).foreach(sys.error)
+}
+makeSite := (makeSite triggeredBy generateDocs).value
+makeSite := (makeSite dependsOn generateDocs).value
+ghpagesPushSite := (ghpagesPushSite dependsOn makeSite).value

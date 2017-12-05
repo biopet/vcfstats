@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 object VcfStats extends ToolCommand[Args] {
 
   def emptyArgs: Args = Args()
-  def argsParser = new ArgsParser(toolName)
+  def argsParser = new ArgsParser(this)
 
   /** Main entry point from the command line */
   def main(args: Array[String]): Unit = {
@@ -62,4 +62,87 @@ object VcfStats extends ToolCommand[Args] {
                maxContigsInSingleJob = Some(cmdArgs.maxContigsInSingleJob))
       .flatten
   }
+
+  def descriptionText: String =
+    """
+      |Vcfstats is a tool that can generate metrics from a vcf file.
+      |
+      | - General stats (default, can be disabled)
+      | - Genotype stats (default, can be disabled)
+      | - Sample compare (default, can be disabled)
+      | - Sample distributions (default, can be disabled)
+      | - Field histograms
+      |
+      |This tool can run locally single threaded but also on a Apache Spark cluster.
+    """.stripMargin
+
+  def manualText: String =
+    """
+      |Almost all stats are default but can be disabled if required. When having a lot of samples the sample compare step if very intensive.
+      |
+      |The reference fasta should have at least a dict file next to it.
+      |
+      |For the field histograms there are some methods to choose from. This method will be used to choose what value to report in the histogram if there multiple values. Some method require the value to be a Int or Double. If this is not the case an exception is thrown.
+      |
+      | - Min, takes minimal number (Int or double required)
+      | - Max, takes maximum number (Int or double required)
+      | - Avg, calculates the average (Int or double required)
+      | - All, returns all values as separated values
+      | - Unique, returns all unique values as separated values
+      |
+    """.stripMargin
+
+  def exampleText: String =
+    s"""
+      |Default vcfstats run:
+      |${example("-I",
+                 "<input_vcf>",
+                 "-o",
+                 "<output_dir>",
+                 "-R",
+                 "<reference_fasta>")}
+      |
+      |Run only specific regions:
+      |${example("-I",
+                 "<input_vcf>",
+                 "-o",
+                 "<output_dir>",
+                 "-R",
+                 "<reference_fasta>",
+                 "--intervals",
+                 "<bed_file>")}
+      |
+      |Create a histogram of a info field, for the methods see the manual section:
+      |${example("-I",
+                 "<input_vcf>",
+                 "-o",
+                 "<output_dir>",
+                 "-R",
+                 "<reference_fasta>",
+                 "--infoTag",
+                 "<tag_id>:All")}
+      |
+      |Create a histogram of a info field, for the methods see the manual section:
+      |${example("-I",
+                 "<input_vcf>",
+                 "-o",
+                 "<output_dir>",
+                 "-R",
+                 "<reference_fasta>",
+                 "--genotypeTag",
+                 "<tag_id>:All")}
+      |
+      |Run vcfstats on spark. The arg `sparkExecutorMemory` can be changed what is suitable for your cluster, the rest of the spark configs can be changed with the arg `sparkConfigValue`:
+      |${example("-I",
+                 "<input_vcf>",
+                 "-o",
+                 "<output_dir>",
+                 "-R",
+                 "<reference_fasta>",
+                 "--sparkMaster",
+                 "<spark_master>",
+                 "--sparkExecutorMemory",
+                 "10g")}
+    """.stripMargin
+
 }

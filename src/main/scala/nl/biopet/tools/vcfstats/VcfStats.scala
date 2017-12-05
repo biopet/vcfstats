@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 object VcfStats extends ToolCommand[Args] {
 
   def emptyArgs: Args = Args()
-  def argsParser = new ArgsParser(toolName)
+  def argsParser = new ArgsParser(this)
 
   /** Main entry point from the command line */
   def main(args: Array[String]): Unit = {

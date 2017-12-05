@@ -99,7 +99,11 @@ git.remoteRepo := s"git@github.com:biopet/$urlToolName.git"
 ghpagesRepository := file(ghpagesDir)
 
 // Puts Scaladoc output in `in /api subfolder`
-siteSubdirName in SiteScaladoc := s"${version.value}/api"
+
+siteSubdirName in SiteScaladoc := {
+  if (isSnapshot.value) {"develop/api"}
+  else s"${version.value}/api"
+}
 siteDirectory in Laika  := file("target/site")
 
 // FileFilter that only includes current version for deletion.
@@ -107,9 +111,12 @@ siteDirectory in Laika  := file("target/site")
 includeFilter in ghpagesCleanSite := new FileFilter{
   def accept(f: File) = {
     println("path=" + f.getPath)
-    f.getPath.contains(s"${version.value}") ||
-      ( !(isSnapshot.value) &&
-        f.getPath == new java.io.File(ghpagesRepository.value, "index.html").getPath )
+    if (isSnapshot.value) {
+      f.getParent.contains("develop")
+    } else {
+      f.getPath.contains(s"${version.value}") ||
+        f.getPath == new java.io.File(ghpagesRepository.value, "index.html").getPath
+    }
   }
 }
 lazy val generateDocs = taskKey[Unit]("Generate documentation files")
@@ -118,10 +125,10 @@ lazy val generateReadme = taskKey[Unit]("Generate readme")
 generateDocs := {
   import sbt.Attributed.data
   val r = (runner in Runtime).value
-  val input = Seq(docsDir, version.value, (!isSnapshot.value).toString)
+  val input = Seq("--generateDocs", s"outputDir=$docsDir,version=${version.value},release=${!isSnapshot.value}", version.value)
   val classPath =  (fullClasspath in Runtime).value
   r.run(
-    s"$classPrefix.Documentation",
+    s"$classPrefix.${name.value}",
     data(classPath),
     input,
     streams.value.log
@@ -130,10 +137,10 @@ generateDocs := {
 generateReadme := {
   import sbt.Attributed.data
   val r: ScalaRun = (runner in Runtime).value
-  val input = Seq(readme)
+  val input = Seq("--generateReadme", readme)
   val classPath =  (fullClasspath in Runtime).value
   r.run(
-    s"$classPrefix.Readme",
+    s"$classPrefix.${name.value}",
     data(classPath),
     input,
     streams.value.log

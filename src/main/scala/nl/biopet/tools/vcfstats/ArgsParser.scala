@@ -5,7 +5,8 @@ import java.io.File
 import nl.biopet.utils.tool.{AbstractOptParser, ToolCommand}
 import nl.biopet.utils.ngs.vcf.VcfField
 
-class ArgsParser(toolCommand: ToolCommand[Args]) extends AbstractOptParser(toolCommand) {
+class ArgsParser(toolCommand: ToolCommand[Args])
+    extends AbstractOptParser(toolCommand) {
   opt[File]('I', "inputFile") required () valueName "<file>" action { (x, c) =>
     c.copy(inputFile = x.getAbsoluteFile)
   } text "Input VCF file (required)"

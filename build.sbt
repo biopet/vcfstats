@@ -1,19 +1,33 @@
 organization := "com.github.biopet"
 name := "VcfStats"
 
+homepage := Some(url(s"https://github.com/biopet/$urlToolName"))
+licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
+
+scmInfo := Some(
+  ScmInfo(
+    url(s"https://github.com/biopet/$urlToolName"),
+    s"scm:git@github.com:biopet/$urlToolName.git"
+  )
+)
+
+developers += Developer(id="ffinfo", name="Peter van 't Hof", email="pjrvanthof@gmail.com", url=url("https://github.com/ffinfo"))
+
+publishMavenStyle := true
+
 scalaVersion := "2.11.11"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers += Resolver.sonatypeRepo("releases")
 
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
 
-libraryDependencies += "com.github.biopet" %% "tool-utils" % "0.2-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "ngs-utils" % "0.2-SNAPSHOT" changing()
-libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.2-SNAPSHOT" changing()
+libraryDependencies += "com.github.biopet" %% "tool-utils" % "0.2"
+libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.2.1"
 
-libraryDependencies += "com.github.biopet" %% "tool-test-utils" % "0.1-SNAPSHOT" % Test changing()
+libraryDependencies += "com.github.biopet" %% "tool-test-utils" % "0.1" % Test
 
 mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
@@ -78,8 +92,8 @@ assemblyMergeStrategy in assembly := {
 }
 
 // Documentation stuff
-val urlToolName="vcfstats"
-val classPrefix="nl.biopet.tools.vcfstats"
+lazy val urlToolName="vcfstats"
+lazy val classPrefix="nl.biopet.tools.vcfstats"
 
 import LaikaKeys._
 enablePlugins(LaikaSitePlugin)

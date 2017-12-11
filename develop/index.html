@@ -162,150 +162,150 @@
         
         <h2 id="usage" class="section">Usage</h2>
         <p>Usage for VcfStats:</p>
-        <p>&lt;table class=&quot;table&quot;&gt;
-          &lt;thead&gt;
-            &lt;tr&gt;
-              &lt;th&gt;Option&lt;/th&gt;
-              &lt;th&gt;Required&lt;/th&gt;
-              &lt;th&gt;Can occur multiple times&lt;/th&gt;
-              &lt;th&gt;Description&lt;/th&gt;
-            &lt;/tr&gt;
-          &lt;/thead&gt;
-          &lt;tbody&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--log_level, -l&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Level of log information printed. Possible levels: &#39;debug&#39;, &#39;info&#39;, &#39;warn&#39;, &#39;error&#39;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--help, -h&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Print usage&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--version, -v&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Print version&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--inputFile, -I&lt;/td&gt;
-              &lt;td&gt;yes&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Input VCF file (required)&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--referenceFile, -R&lt;/td&gt;
-              &lt;td&gt;yes&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Fasta reference which was used to call input VCF (required)&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--outputDir, -o&lt;/td&gt;
-              &lt;td&gt;yes&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Path to directory for output (required)&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--intervals&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Path to interval (BED) file (optional)&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--infoTag&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;yes (unlimited)&lt;/td&gt;
-              &lt;td&gt;Summarize these info tags&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--genotypeTag&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;yes (unlimited)&lt;/td&gt;
-              &lt;td&gt;Summarize these genotype tags&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--sampleToSampleMinDepth&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Minimal depth require to consider sample to sample comparison&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--binSize&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Binsize in estimated base pairs&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--maxContigsInSingleJob&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Max number of bins to be combined, default is 250&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--writeBinStats&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Write bin statistics. Default False&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--localThreads, -t&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Number of local threads to use&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--notWriteContigStats&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Number of local threads to use&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--skipGeneral&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Skipping general stats&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--skipGenotype&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Skipping genotype stats&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--skipSampleDistributions&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Skipping sample distributions stats&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--skipSampleCompare&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Skipping sample compare&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--sparkMaster&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Spark master to use&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--sparkExecutorMemory&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;Spark executor memory to use&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-              &lt;td&gt;--sparkConfigValue&lt;/td&gt;
-              &lt;td&gt;no&lt;/td&gt;
-              &lt;td&gt;yes (unlimited)&lt;/td&gt;
-              &lt;td&gt;Add values to the spark config&lt;/td&gt;
-            &lt;/tr&gt;
-          &lt;/tbody&gt;
-        &lt;/table&gt;</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Required</th>
+              <th>Can occur multiple times</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>--log_level, -l</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Level of log information printed. Possible levels: &#39;debug&#39;, &#39;info&#39;, &#39;warn&#39;, &#39;error&#39;</td>
+            </tr>
+            <tr>
+              <td>--help, -h</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Print usage</td>
+            </tr>
+            <tr>
+              <td>--version, -v</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Print version</td>
+            </tr>
+            <tr>
+              <td>--inputFile, -I</td>
+              <td>yes</td>
+              <td>no</td>
+              <td>Input VCF file (required)</td>
+            </tr>
+            <tr>
+              <td>--referenceFile, -R</td>
+              <td>yes</td>
+              <td>no</td>
+              <td>Fasta reference which was used to call input VCF (required)</td>
+            </tr>
+            <tr>
+              <td>--outputDir, -o</td>
+              <td>yes</td>
+              <td>no</td>
+              <td>Path to directory for output (required)</td>
+            </tr>
+            <tr>
+              <td>--intervals</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Path to interval (BED) file (optional)</td>
+            </tr>
+            <tr>
+              <td>--infoTag</td>
+              <td>no</td>
+              <td>yes (unlimited)</td>
+              <td>Summarize these info tags</td>
+            </tr>
+            <tr>
+              <td>--genotypeTag</td>
+              <td>no</td>
+              <td>yes (unlimited)</td>
+              <td>Summarize these genotype tags</td>
+            </tr>
+            <tr>
+              <td>--sampleToSampleMinDepth</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Minimal depth require to consider sample to sample comparison</td>
+            </tr>
+            <tr>
+              <td>--binSize</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Binsize in estimated base pairs</td>
+            </tr>
+            <tr>
+              <td>--maxContigsInSingleJob</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Max number of bins to be combined, default is 250</td>
+            </tr>
+            <tr>
+              <td>--writeBinStats</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Write bin statistics. Default False</td>
+            </tr>
+            <tr>
+              <td>--localThreads, -t</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Number of local threads to use</td>
+            </tr>
+            <tr>
+              <td>--notWriteContigStats</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Number of local threads to use</td>
+            </tr>
+            <tr>
+              <td>--skipGeneral</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping general stats</td>
+            </tr>
+            <tr>
+              <td>--skipGenotype</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping genotype stats</td>
+            </tr>
+            <tr>
+              <td>--skipSampleDistributions</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping sample distributions stats</td>
+            </tr>
+            <tr>
+              <td>--skipSampleCompare</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping sample compare</td>
+            </tr>
+            <tr>
+              <td>--sparkMaster</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Spark master to use</td>
+            </tr>
+            <tr>
+              <td>--sparkExecutorMemory</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Spark executor memory to use</td>
+            </tr>
+            <tr>
+              <td>--sparkConfigValue</td>
+              <td>no</td>
+              <td>yes (unlimited)</td>
+              <td>Add values to the spark config</td>
+            </tr>
+          </tbody>
+        </table>
         
         <h1 id="about" class="section">About</h1>
         <p>VcfStats is part of BIOPET tool suite that is developed at LUMC by <a href="http://sasc.lumc.nl/">the SASC team</a>.
@@ -323,14 +323,14 @@
         good results with <a href="https://www.jetbrains.com/idea/">this IDE</a>.</p>
         
         <h1 id="contact" class="section">Contact</h1>
-        <p>&lt;p&gt;
-          &lt;!-- Obscure e-mail address for spammers --&gt;
+        <p>
+          <!-- Obscure e-mail address for spammers -->
         For any question related to VcfStats, please use the
-        &lt;a href=&#39;https://github.com/biopet/vcfstats/issues&#39;&gt;github issue tracker&lt;/a&gt;
+        <a href='https://github.com/biopet/vcfstats/issues'>github issue tracker</a>
         or contact
-         &lt;a href=&#39;http://sasc.lumc.nl/&#39;&gt;the SASC team&lt;/a&gt; directly at: &lt;a href=&#39;&amp;#109;&amp;#97;&amp;#105;&amp;#108;&amp;#116;&amp;#111;&amp;#58;&amp;#115;&amp;#97;&amp;#115;&amp;#99;&amp;#64;&amp;#108;&amp;#117;&amp;#109;&amp;#99;&amp;#46;&amp;#110;&amp;#108;&#39;&gt;
-        &amp;#115;&amp;#97;&amp;#115;&amp;#99;&amp;#64;&amp;#108;&amp;#117;&amp;#109;&amp;#99;&amp;#46;&amp;#110;&amp;#108;&lt;/a&gt;.
-        &lt;/p&gt;</p>      
+         <a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
+        &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
+        </p>      
 
       </div>
     </div>

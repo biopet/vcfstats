@@ -2,8 +2,8 @@ language: scala
 scala:
   - 2.11.11
 script:
-  - sbt clean scalafmt coverage test coverageReport coverageAggregate makeSite generateReadme
-  - "git diff --exit-code || (echo ERROR: Git changes detected, please regenerate the readme and run scalafmt with: sbt generateReadme scalafmt && exit 1)"
+  - sbt clean scalafmt headerCreate coverage test coverageReport coverageAggregate makeSite biopetGenerateReadme
+  - "git diff --exit-code || (echo ERROR: Git changes detected, please regenerate the readme, create license headers and run scalafmt with: sbt biopetGenerateReadme headerCreate scalafmt && exit 1)"
 after_success:
   - sbt coveralls
   - bash <(curl -s https://codecov.io/bash)

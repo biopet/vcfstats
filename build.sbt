@@ -1,18 +1,14 @@
 organization := "com.github.biopet"
 organizationName := "Sequencing Analysis Support Core - Leiden University Medical Center"
 
-//TODO: Start year should reflect the tools original start year on github.com/biopet/biopet in the tools section
 startYear := Some(2017)
 
-//TODO: change name
-name := "ToolTemplate"
-biopetUrlName := "tool-template"
+name := "VcfStats"
+biopetUrlName := "vcfstats"
 
-// TODO: Is it a tool?
 biopetIsTool := true
 
-// TODO: Check if mainClass is correct
-mainClass in assembly := Some(s"nl.biopet.tools.${name.value.toLowerCase()}.${name.value}")
+mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
 developers := List(
   Developer(id="ffinfo", name="Peter van 't Hof", email="pjrvanthof@gmail.com", url=url("https://github.com/ffinfo")),
@@ -21,5 +17,10 @@ developers := List(
 
 scalaVersion := "2.11.11"
 
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
+dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
+
 libraryDependencies += "com.github.biopet" %% "tool-utils" % "0.2"
 libraryDependencies += "com.github.biopet" %% "tool-test-utils" % "0.1" % Test
+libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.2.1"

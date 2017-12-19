@@ -10,10 +10,8 @@ biopetIsTool := true
 
 mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
-developers := List(
-  Developer(id="ffinfo", name="Peter van 't Hof", email="pjrvanthof@gmail.com", url=url("https://github.com/ffinfo")),
-  Developer(id="rhpvorderman", name="Ruben Vorderman", email="r.h.p.vorderman@lumc.nl", url=url("https://github.com/rhpvorderman"))
-)
+developers += Developer(id="ffinfo", name="Peter van 't Hof", email="pjrvanthof@gmail.com", url=url("https://github.com/ffinfo")),
+developers += Developer(id="rhpvorderman", name="Ruben Vorderman", email="r.h.p.vorderman@lumc.nl", url=url("https://github.com/rhpvorderman"))
 
 scalaVersion := "2.11.11"
 
@@ -22,5 +20,9 @@ dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.
 dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
 
 libraryDependencies += "com.github.biopet" %% "tool-utils" % "0.2"
+libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.3-SNAPSHOT" changing()
+
+libraryDependencies += "org.apache.spark" %% "spark-core" % "2.2.1" % Provided
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.2.1" % Provided
+
 libraryDependencies += "com.github.biopet" %% "tool-test-utils" % "0.1" % Test
-libraryDependencies += "com.github.biopet" %% "spark-utils" % "0.2.1"

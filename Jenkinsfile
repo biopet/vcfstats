@@ -11,9 +11,9 @@ node('local') {
         }
 
         stage('Build & Test') {
-            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors clean scalafmt coverage test coverageReport coverageAggregate makeSite generateReadme assembly"
+            sh "${tool name: 'sbt 0.13.15', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt -no-colors clean scalafmt headerCreate coverage test coverageReport coverageAggregate makeSite biopetGenerateReadme assembly"
             sh "java -jar target/scala-2.11/*-assembly-*.jar -h"
-            sh "git diff --exit-code || (echo \"ERROR: Git changes detected, please regenerate the readme and run scalafmt with: sbt generateReadme scalafmt\" && exit 1)"
+            sh "git diff --exit-code || (echo \"ERROR: Git changes detected, please regenerate the readme, create license headers and run scalafmt: sbt biopetGenerateReadme headerCreate scalafmt\" && exit 1)"
         }
 
         stage('Results') {

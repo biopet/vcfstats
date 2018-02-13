@@ -37,9 +37,10 @@ import nl.biopet.utils.ngs.vcf.{
 }
 import nl.biopet.utils.spark
 import nl.biopet.utils.tool.ToolCommand
-import org.apache.spark.{FutureAction, SparkContext}
+import org.apache.spark.{FutureAction, SparkConf, SparkContext}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -76,11 +77,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
     val reader = new VCFFileReader(cmdArgs.inputFile, true)
 
-    implicit val sc: SparkContext = spark.loadSparkContext(
-      toolName,
-      master = cmdArgs.sparkMaster,
-      localThreads = cmdArgs.localThreads,
-      sparkConfig = cmdArgs.sparkConfigValues)
+    val sparkConf: SparkConf =
+      new SparkConf(true).setMaster(cmdArgs.sparkMaster.getOrElse("local[1]"))
+    implicit val sparkSession: SparkSession =
+      SparkSession.builder().config(sparkConf).getOrCreate()
+    implicit val sc: SparkContext = sparkSession.sparkContext
 
     try {
       val cmdArgsBroadcast = sc.broadcast(cmdArgs)

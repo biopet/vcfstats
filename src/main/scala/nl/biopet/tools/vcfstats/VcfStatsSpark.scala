@@ -172,7 +172,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
       contig: Option[String])(implicit sc: SparkContext): ChunkResult = {
     val prefixMessage = contig match {
       case Some(c) => s"Contig $c:"
-      case _ => "Small contigs:"
+      case _       => "Small contigs:"
     }
     logger.info(s"$prefixMessage Start reading vcf file")
     val vcfRecords = loadVcfFile(cmdArgs, regions, prefixMessage)
@@ -189,11 +189,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
       contigSampleDistributions(vcfRecords, cmdArgs, regions, prefixMessage)
 
     logger.info("Submitting infoFieldCounts jobs")
-    val infoCounts = contigInfoFieldCounts(vcfRecords,
-                                           header,
-                                           cmdArgs,
-                                           regions,
-                                           prefixMessage)
+    val infoCounts =
+      contigInfoFieldCounts(vcfRecords, header, cmdArgs, regions, prefixMessage)
 
     logger.info("Submitting genotypeFieldCounts jobs")
     val genotypeCounts = contigGenotypeFieldCounts(vcfRecords,
@@ -226,10 +223,10 @@ object VcfStatsSpark extends ToolCommand[Args] {
     new File(outputDir, "contigs" + File.separator + contig)
 
   /** This method will load a list of regions into memory */
-  def loadVcfFile(cmdArgs: Broadcast[Args],
-                  regions: Broadcast[List[BedRecord]],
-                  prefixMessage: String)(
-      implicit sc: SparkContext): RDD[VariantContext] = {
+  def loadVcfFile(
+      cmdArgs: Broadcast[Args],
+      regions: Broadcast[List[BedRecord]],
+      prefixMessage: String)(implicit sc: SparkContext): RDD[VariantContext] = {
     sc.setJobGroup(s"$prefixMessage Loading Vcf Records",
                    s"$prefixMessage Loading Vcf Records")
     val vcfRecords = spark.vcf
@@ -280,8 +277,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
           .reduceByKey(_ += _)
           .foreachAsync {
             case (_, stats) =>
-              stats.writeToTsv(
-                new File(cmdArgs.value.outputDir, "general.tsv"))
+              stats.writeToTsv(new File(cmdArgs.value.outputDir, "general.tsv"))
           })
     } else None
   }
@@ -313,10 +309,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   }
 
   /** This will combine contigs stats and write the output file */
-  def totalGenotypeStats(
-      contigs: List[RDD[(String, GenotypeStats)]],
-      cmdArgs: Broadcast[Args],
-      header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
+  def totalGenotypeStats(contigs: List[RDD[(String, GenotypeStats)]],
+                         cmdArgs: Broadcast[Args],
+                         header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
       val sc = contigs.head.context
       sc.setJobGroup("Total Genotype stats", "Total Genotype stats")
@@ -366,8 +361,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
       cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
       val sc = contigs.head.context
-      sc.setJobGroup("Total Sample Distributions",
-                     "Total Sample Distributions")
+      sc.setJobGroup("Total Sample Distributions", "Total Sample Distributions")
       val emptyRdd = sc.parallelize(List("total" -> new SampleDistributions))
       Some(
         sc.union(emptyRdd :: contigs)
@@ -415,10 +409,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   }
 
   /** This will combine contigs stats and write the output file */
-  def totalSampleCompare(
-      contigs: List[RDD[(String, SampleCompare)]],
-      cmdArgs: Broadcast[Args],
-      header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
+  def totalSampleCompare(contigs: List[RDD[(String, SampleCompare)]],
+                         cmdArgs: Broadcast[Args],
+                         header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
       val sc = contigs.head.context
       sc.setJobGroup("Total Sample Compare", "Total Sample Compare")
@@ -502,14 +495,13 @@ object VcfStatsSpark extends ToolCommand[Args] {
   }
 
   /** This will generate contigs stats and write this if this is not disabled */
-  def contigGenotypeFieldCounts(
-      vcfRecords: RDD[VariantContext],
-      header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args],
-      regions: Broadcast[List[BedRecord]],
-      prefixMessage: String): Map[VcfField,
-                                  (Option[Future[Unit]],
-                                   RDD[(String, GenotypeFieldCounts)])] = {
+  def contigGenotypeFieldCounts(vcfRecords: RDD[VariantContext],
+                                header: Broadcast[VCFHeader],
+                                cmdArgs: Broadcast[Args],
+                                regions: Broadcast[List[BedRecord]],
+                                prefixMessage: String)
+    : Map[VcfField,
+          (Option[Future[Unit]], RDD[(String, GenotypeFieldCounts)])] = {
     (for (tag <- cmdArgs.value.genotypeTags)
       yield
         tag -> {

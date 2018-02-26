@@ -153,17 +153,15 @@ object VcfStats extends ToolCommand[Args] {
                  "--genotypeTag",
                  "<tag_id>:All")}
       |
-      |Run vcfstats on spark. The arg `sparkExecutorMemory` can be changed what is suitable for your cluster, the rest of the spark configs can be changed with the arg `sparkConfigValue`:
-      |${example("-I",
-                 "<input_vcf>",
-                 "-o",
-                 "<output_dir>",
-                 "-R",
-                 "<reference_fasta>",
-                 "--sparkMaster",
-                 "<spark_master>",
-                 "--sparkExecutorMemory",
-                 "10g")}
+      |Run vcfstats on spark:
+      |${sparkExample("-I",
+                      "<input_vcf>",
+                      "-o",
+                      "<output_dir>",
+                      "-R",
+                      "<reference_fasta>",
+                      "--sparkMaster",
+                      "<spark_master>")}
     """.stripMargin
 
 }

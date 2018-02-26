@@ -8,6 +8,8 @@ biopetUrlName := "vcfstats"
 
 biopetIsTool := true
 
+fork in Test := true
+
 mainClass in assembly := Some("nl.biopet.tools.vcfstats.VcfStats")
 
 developers += Developer(id = "ffinfo",

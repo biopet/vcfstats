@@ -21,7 +21,7 @@ developers += Developer(id = "rhpvorderman",
                         email = "r.h.p.vorderman@lumc.nl",
                         url = url("https://github.com/rhpvorderman"))
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.12"
 
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"

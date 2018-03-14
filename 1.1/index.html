@@ -1,0 +1,368 @@
+<!--
+   Copyright (c) 2014 Biopet
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy of
+   this software and associated documentation files (the "Software"), to deal in
+   the Software without restriction, including without limitation the rights to
+   use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+   the Software, and to permit persons to whom the Software is furnished to do so,
+   subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+   FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+   COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>VcfStats</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="css/docs.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">VcfStats</a>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="navbar-text" id="Version">
+              Version</li>
+          </ul>
+        </div>
+      </div>
+
+
+
+    </div>
+
+  </nav>
+  <div class="container">
+
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar" >
+
+        <ul class="nav nav-sidebar nav-list">
+          <li><b>Index</b></li>
+          
+          <li><a href="#description"><span>Description</span></a></li>
+          
+          <li><a href="#installation"><span>Installation</span></a></li>
+          
+          <li><a href="#manual"><span>Manual</span></a></li>
+          
+          <li><a href="#about"><span>About</span></a></li>
+          
+          <li><a href="#contributing"><span>Contributing</span></a></li>
+          
+          <li><a href="#contact"><span>Contact</span></a></li>
+          
+        </ul>
+        <ul class="nav nav-sidebar nav-list">
+          <li><b>Project Links</b></li>
+
+          <li><a href="https://github.com/biopet/vcfstats">Source code</a></li>
+          <li><a href="https://github.com/biopet/vcfstats/issues">Feedback, feature requests and bug reports</a></li>
+          <li><a href="api/index.html">API Documentation</a></li>
+        </ul>
+        <ul class="nav nav-sidebar nav-list">
+          <li><b>Documentation</b></li>
+          <li><a href="../index.html">Latest stable version</a></li>
+          <li><a href="../develop/index.html">Development version</a></li>
+        </ul>
+      </div>
+      
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="top">
+
+        
+        <h1 id="description" class="section">Description</h1>
+        <p>Vcfstats is a tool that can generate metrics from a vcf file.</p>
+        <ul>
+          <li>General stats (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Genotype stats (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Sample compare (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Sample distributions (default, can be disabled)</li>
+        </ul>
+        <ul>
+          <li>Field histograms</li>
+        </ul>
+        <p>This tool can run locally single threaded but also on a Apache Spark cluster.</p>
+        
+        <h1 id="installation" class="section">Installation</h1>
+        <p>VcfStats requires Java 8 to be installed on your device. Download Java 8
+        <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">here</a>
+        or install via your distribution&#39;s package manager.</p>
+        <p>Download the latest version of VcfStats <a href="https://github.com/biopet/vcfstats/releases/">here</a>.
+        To generate the usage run:</p>
+        <pre><code>java -jar &lt;VcfStats_jar&gt; --help</code></pre>
+        
+        <h1 id="manual" class="section">Manual</h1>
+        <p>Almost all stats are default but can be disabled if required. When having a lot of samples the sample compare step if very intensive.</p>
+        <p>The reference fasta should have at least a dict file next to it.</p>
+        <p>For the field histograms there are some methods to choose from. This method will be used to choose what value to report in the histogram if there multiple values. Some method require the value to be a Int or Double. If this is not the case an exception is thrown.</p>
+        <ul>
+          <li>Min, takes minimal number (Int or double required)</li>
+        </ul>
+        <ul>
+          <li>Max, takes maximum number (Int or double required)</li>
+        </ul>
+        <ul>
+          <li>Avg, calculates the average (Int or double required)</li>
+        </ul>
+        <ul>
+          <li>All, returns all values as separated values</li>
+        </ul>
+        <ul>
+          <li>Unique, returns all unique values as separated values</li>
+        </ul>
+        
+        <h2 id="example" class="section">Example</h2>
+        <p>Default vcfstats run:</p>
+        <pre><code>java -jar &lt;VcfStats_jar&gt; \
+-I &lt;input_vcf&gt; \
+-o &lt;output_dir&gt; \
+-R &lt;reference_fasta&gt;</code></pre>
+        <p>Run only specific regions:</p>
+        <pre><code>java -jar &lt;VcfStats_jar&gt; \
+-I &lt;input_vcf&gt; \
+-o &lt;output_dir&gt; \
+-R &lt;reference_fasta&gt; \
+--intervals &lt;bed_file&gt;</code></pre>
+        <p>Create a histogram of a info field, for the methods see the manual section:</p>
+        <pre><code>java -jar &lt;VcfStats_jar&gt; \
+-I &lt;input_vcf&gt; \
+-o &lt;output_dir&gt; \
+-R &lt;reference_fasta&gt; \
+--infoTag &lt;tag_id&gt;:All</code></pre>
+        <p>Create a histogram of a info field, for the methods see the manual section:</p>
+        <pre><code>java -jar &lt;VcfStats_jar&gt; \
+-I &lt;input_vcf&gt; \
+-o &lt;output_dir&gt; \
+-R &lt;reference_fasta&gt; \
+--genotypeTag &lt;tag_id&gt;:All</code></pre>
+        <p>Run vcfstats on spark:</p>
+        <pre><code>spark-submit &lt;spark arguments&gt; &lt;VcfStats_jar&gt; \
+-I &lt;input_vcf&gt; \
+-o &lt;output_dir&gt; \
+-R &lt;reference_fasta&gt; \
+--sparkMaster &lt;spark_master&gt;</code></pre>
+        
+        <h2 id="usage" class="section">Usage</h2>
+        <p>Usage for VcfStats:</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Required</th>
+              <th>Can occur multiple times</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>--log_level, -l</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Level of log information printed. Possible levels: &#39;debug&#39;, &#39;info&#39;, &#39;warn&#39;, &#39;error&#39;</td>
+            </tr>
+            <tr>
+              <td>--help, -h</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Print usage</td>
+            </tr>
+            <tr>
+              <td>--version, -v</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Print version</td>
+            </tr>
+            <tr>
+              <td>--inputFile, -I</td>
+              <td>yes</td>
+              <td>no</td>
+              <td>Input VCF file (required)</td>
+            </tr>
+            <tr>
+              <td>--referenceFile, -R</td>
+              <td>yes</td>
+              <td>no</td>
+              <td>Fasta reference which was used to call input VCF (required)</td>
+            </tr>
+            <tr>
+              <td>--outputDir, -o</td>
+              <td>yes</td>
+              <td>no</td>
+              <td>Path to directory for output (required)</td>
+            </tr>
+            <tr>
+              <td>--intervals</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Path to interval (BED) file (optional)</td>
+            </tr>
+            <tr>
+              <td>--infoTag</td>
+              <td>no</td>
+              <td>yes (unlimited)</td>
+              <td>Summarize these info tags</td>
+            </tr>
+            <tr>
+              <td>--genotypeTag</td>
+              <td>no</td>
+              <td>yes (unlimited)</td>
+              <td>Summarize these genotype tags</td>
+            </tr>
+            <tr>
+              <td>--sampleToSampleMinDepth</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Minimal depth require to consider sample to sample comparison</td>
+            </tr>
+            <tr>
+              <td>--binSize</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Binsize in estimated base pairs</td>
+            </tr>
+            <tr>
+              <td>--maxContigsInSingleJob</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Max number of bins to be combined, default is 250</td>
+            </tr>
+            <tr>
+              <td>--writeBinStats</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Write bin statistics. Default False</td>
+            </tr>
+            <tr>
+              <td>--localThreads, -t</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Number of local threads to use</td>
+            </tr>
+            <tr>
+              <td>--notWriteContigStats</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Number of local threads to use</td>
+            </tr>
+            <tr>
+              <td>--skipGeneral</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping general stats</td>
+            </tr>
+            <tr>
+              <td>--skipGenotype</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping genotype stats</td>
+            </tr>
+            <tr>
+              <td>--skipSampleDistributions</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping sample distributions stats</td>
+            </tr>
+            <tr>
+              <td>--skipSampleCompare</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Skipping sample compare</td>
+            </tr>
+            <tr>
+              <td>--sparkMaster</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Spark master to use</td>
+            </tr>
+            <tr>
+              <td>--sparkExecutorMemory</td>
+              <td>no</td>
+              <td>no</td>
+              <td>Spark executor memory to use</td>
+            </tr>
+            <tr>
+              <td>--sparkConfigValue</td>
+              <td>no</td>
+              <td>yes (unlimited)</td>
+              <td>Add values to the spark config</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h1 id="about" class="section">About</h1>
+        <p>VcfStats is part of BIOPET tool suite that is developed at LUMC by <a href="http://sasc.lumc.nl/">the SASC team</a>.
+        Each tool in the BIOPET tool suite is meant to offer a standalone function that can be used to perform a
+        dedicate data analysis task or added as part of <a href="http://biopet-docs.readthedocs.io/en/latest/">BIOPET pipelines</a>.</p>
+        <p>All tools in the BIOPET tool suite are <a href="https://www.gnu.org/philosophy/free-sw.html">Free/Libre</a> and
+        <a href="https://opensource.org/osd">Open Source</a> Software.</p>
+        
+        <h1 id="contributing" class="section">Contributing</h1>
+        <p>The source code of VcfStats can be found <a href="https://github.com/biopet/vcfstats">here</a>.
+        We welcome any contributions. Bug reports, feature requests and feedback can be submitted at our
+        <a href="https://github.com/biopet/vcfstats/issues">issue tracker</a>.</p>
+        <p>VcfStats is build using sbt. Before submitting a pull request, make sure all tests can be passed by
+        running <code>sbt test</code> from the project&#39;s root. We recommend using an IDE to work on VcfStats. We have had
+        good results with <a href="https://www.jetbrains.com/idea/">this IDE</a>.</p>
+        
+        <h1 id="contact" class="section">Contact</h1>
+        <p>
+          <!-- Obscure e-mail address for spammers -->
+        For any question related to VcfStats, please use the
+        <a href='https://github.com/biopet/vcfstats/issues'>github issue tracker</a>
+        or contact
+         <a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
+        &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
+        </p>      
+
+      </div>
+    </div>
+
+  </div>
+  <script>
+    var loc = window.location.pathname;
+    var thisDir = loc.substring(0, loc.lastIndexOf('/'));
+    var splitLocation = window.location.pathname.split('/');
+    var version = splitLocation[splitLocation.length - 2]
+    document.getElementById("Version").innerHTML = "Version " + version;
+  </script>
+</body>
+
+</html>

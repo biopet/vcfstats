@@ -35,6 +35,7 @@ case class Args(inputFile: File = null,
                 maxContigsInSingleJob: Int = 250,
                 writeBinStats: Boolean = false,
                 localThreads: Int = 1,
+                repartition: Boolean = false,
                 notWriteContigStats: Boolean = false,
                 sparkMaster: Option[String] = None,
                 sparkConfigValues: Map[String, String] = Map(

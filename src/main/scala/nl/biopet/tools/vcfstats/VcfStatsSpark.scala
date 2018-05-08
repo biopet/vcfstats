@@ -201,7 +201,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
                                  regions,
                                  prefixMessage,
                                  sorting = cmdArgs.value.repartition,
-                                 countJob = false)
+                                 countJob = false,
+                                 cache = false)
     logger.info(
       s"$prefixMessage Vcf file in memory, submitting jobs to calculate stats")
 
@@ -283,19 +284,20 @@ object VcfStatsSpark extends ToolCommand[Args] {
     new File(outputDir, "contigs" + File.separator + contig)
 
   /** This method will load a list of regions into memory */
-  def loadVcfFile(cmdArgs: Broadcast[Args],
-                  regions: Broadcast[List[BedRecord]],
-                  prefixMessage: String,
-                  sorting: Boolean = true,
-                  countJob: Boolean = true)(
-      implicit sc: SparkContext): RDD[VariantContext] = {
+  def loadVcfFile(
+      cmdArgs: Broadcast[Args],
+      regions: Broadcast[List[BedRecord]],
+      prefixMessage: String,
+      sorting: Boolean = true,
+      countJob: Boolean = true,
+      cache: Boolean = true)(implicit sc: SparkContext): RDD[VariantContext] = {
     sc.setJobGroup(s"$prefixMessage Loading Vcf Records",
                    s"$prefixMessage Loading Vcf Records")
     val vcfRecords = spark.vcf
       .loadRecords(cmdArgs.value.inputFile,
                    regions,
                    cmdArgs.value.binSize,
-                   cached = true,
+                   cached = cache,
                    sorting = sorting)
     if (countJob) vcfRecords.countAsync()
     sc.clearJobGroup()

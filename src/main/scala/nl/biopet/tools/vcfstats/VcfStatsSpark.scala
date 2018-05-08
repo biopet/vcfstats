@@ -87,7 +87,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
       val cmdArgsBroadcast = sc.broadcast(cmdArgs)
       val header: Broadcast[VCFHeader] = sc.broadcast(reader.getFileHeader)
       val regions: Broadcast[List[BedRecord]] =
-        sc.broadcast(VcfStats.regions(cmdArgs))
+        sc.broadcast(VcfStats.createRegions(cmdArgs))
 
       val shortContigs = sc.broadcast(
         regions.value

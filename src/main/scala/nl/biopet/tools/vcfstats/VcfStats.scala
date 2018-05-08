@@ -42,38 +42,51 @@ object VcfStats extends ToolCommand[Args] {
   def main(args: Array[String]): Unit = {
     val cmdArgs = cmdArrayToArgs(args)
 
+    logger.info("Start")
     require(cmdArgs.outputDir.exists(), s"${cmdArgs.outputDir} does not exist")
     require(cmdArgs.outputDir.isDirectory,
             s"${cmdArgs.outputDir} is not a directory")
 
     if (cmdArgs.sparkMaster.isDefined) VcfStatsSpark.mainFromArgs(cmdArgs)
     else mainFromArgs(cmdArgs)
+    logger.info("Done")
   }
 
   /** API entry point */
   def mainFromArgs(cmdArgs: Args): Unit = {
+    logger.info("Reading header")
     val reader = new VCFFileReader(cmdArgs.inputFile, true)
     val header = reader.getFileHeader
     val totalStats = StatsTotal.empty(header, cmdArgs)
+    val regions = createRegions(cmdArgs)
+    val totalSize = regions.map(_.length.toLong).sum
+    var basesProcessed = 0L
 
-    for ((contig, regions) <- regions(cmdArgs).groupBy(_.chr)) {
+    for ((contig, regions) <- regions.groupBy(_.chr)) {
+      logger.info(s"Starting on contig: '$contig'")
       val contigStats = StatsTotal.empty(header, cmdArgs)
       val contigDir =
         new File(cmdArgs.outputDir, "contigs" + File.separator + contig)
       contigDir.mkdirs()
-      for (region <- regions;
-           record <- reader.query(region.chr, region.start + 1, region.end)) {
-        contigStats.addRecord(record, cmdArgs)
+      for (region <- regions) {
+        for (record <- reader.query(region.chr, region.start + 1, region.end)) {
+          contigStats.addRecord(record, cmdArgs)
+        }
+        basesProcessed += region.length
+        val percentage = basesProcessed.toDouble / totalSize * 100
+        logger.info(s"$percentage% processed")
       }
       contigStats.writeStats(contigDir)
       totalStats += contigStats
+      logger.info(s"Done on contig: '$contig'")
     }
 
+    logger.info("Writing total stats")
     totalStats.writeStats(cmdArgs.outputDir)
   }
 
   /** creates regions to analyse */
-  def regions(cmdArgs: Args): List[BedRecord] = {
+  def createRegions(cmdArgs: Args): List[BedRecord] = {
     (cmdArgs.intervals match {
       case Some(i) =>
         BedRecordList.fromFile(i).validateContigs(cmdArgs.referenceFile)

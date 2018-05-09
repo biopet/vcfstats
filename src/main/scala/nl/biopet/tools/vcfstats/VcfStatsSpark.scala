@@ -92,17 +92,19 @@ object VcfStatsSpark extends ToolCommand[Args] {
       val shortContigs = sc.broadcast(
         regions.value
           .groupBy(_.chr)
-          .filter(_._2.length == 1)
+          .filter { case (_, l) => l.length == 1 }
           .values
           .flatten
           .toList)
       val longContigs = regions.value
         .groupBy(_.chr)
-        .filter(_._2.length != 1)
-        .map(x => x._1 -> sc.broadcast(x._2))
+        .filter { case (_, l) => l.length != 1 }
+        .map { case (k, v) => k -> sc.broadcast(v) }
         .toList
       if (!cmdArgs.notWriteContigStats) {
-        (shortContigs.value.map(_.chr) ::: longContigs.map(_._1)).foreach(x =>
+        (shortContigs.value.map(_.chr) ::: longContigs.map {
+          case (contig, _) => contig
+        }.distinct).foreach(x =>
           new File(cmdArgs.outputDir, "contigs" + File.separator + x).mkdirs())
       }
 
@@ -118,11 +120,13 @@ object VcfStatsSpark extends ToolCommand[Args] {
         sc.setJobGroup("Total stats", "Total stats")
 
         val futures = sc
-          .union(contigsProcess.map(_._2))
-          .map(None -> _._2)
+          .union(contigsProcess.map { case (_, x) => x })
+          .map { case (_, stats) => None -> stats }
           .reduceByKey(_ += _)
-          .foreachAsync(_._2.writeStats(cmdArgs.outputDir)) :: contigsProcess
-          .map(_._1)
+          .foreachAsync {
+            case (_, stats) => stats.writeStats(cmdArgs.outputDir)
+          } :: contigsProcess
+          .map { case (future, _) => future }
         Await.result(Future.sequence(futures), Duration.Inf)
       } else {
         val contigsProcess = processContig(shortContigs,
@@ -244,13 +248,13 @@ object VcfStatsSpark extends ToolCommand[Args] {
                                  sorting = cmdArgs.value.repartition,
                                  countJob = false,
                                  cache = false)
-    val sampleCompare =
+    val (compareFuture, sampleCompare) =
       contigSampleCompare(vcfRecords, header, cmdArgs, regions, prefixMessage)
-    val generalStats =
+    val (generalFuture, generalStats) =
       contigGeneralStats(vcfRecords, cmdArgs, regions, prefixMessage)
-    val genotypeStats =
+    val (genotypeFuture, genotypeStats) =
       contigGenotypeStats(vcfRecords, header, cmdArgs, regions, prefixMessage)
-    val sampleDistribution =
+    val (distributionFuture, sampleDistribution) =
       contigSampleDistributions(vcfRecords, cmdArgs, regions, prefixMessage)
 
     logger.info("Submitting infoFieldCounts jobs")
@@ -267,19 +271,19 @@ object VcfStatsSpark extends ToolCommand[Args] {
     vcfRecords.unpersist()
 
     val contigOutputFuture = Future.sequence(
-      sampleCompare._1.toList ::: generalStats._1.toList ::: sampleDistribution._1.toList :::
-        genotypeStats._1.toList ::: infoCounts
-        .flatMap(_._2._1)
-        .toList ::: genotypeCounts.flatMap(_._2._1).toList)
+      compareFuture.toList ::: generalFuture.toList ::: distributionFuture.toList :::
+        genotypeFuture.toList ::: infoCounts.flatMap { case (_, (x, _)) => x }.toList ::: genotypeCounts.flatMap {
+        case (_, (x, _))                                                => x
+      }.toList)
 
     ChunkResult(
       contigOutputFuture,
-      generalStats._2,
-      genotypeStats._2,
-      sampleDistribution._2,
-      sampleCompare._2,
-      infoCounts.map(x => x._1 -> x._2._2),
-      genotypeCounts.map(x => x._1 -> x._2._2)
+      generalStats,
+      genotypeStats,
+      sampleDistribution,
+      sampleCompare,
+      infoCounts.map { case (k, (_, v))     => k -> v },
+      genotypeCounts.map { case (k, (_, v)) => k -> v }
     )
   }
 
@@ -335,9 +339,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
   /** This will combine contigs stats and write the output file */
   def totalGeneralStats(generalContig: List[RDD[(String, GeneralStats)]],
-                        cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
+                        cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (generalContig.nonEmpty) {
-      val sc = generalContig.head.context
       sc.setJobGroup("Total General stats", "Total General stats")
       val emptyRdd = sc.parallelize(List("total" -> new GeneralStats()))
       Some(
@@ -380,9 +384,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   /** This will combine contigs stats and write the output file */
   def totalGenotypeStats(contigs: List[RDD[(String, GenotypeStats)]],
                          cmdArgs: Broadcast[Args],
-                         header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
+                         header: Broadcast[VCFHeader])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
-      val sc = contigs.head.context
       sc.setJobGroup("Total Genotype stats", "Total Genotype stats")
       val emptyRdd =
         sc.parallelize(List("total" -> new GenotypeStats(header.value)))
@@ -427,9 +431,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   /** This will combine contigs stats and write the output file */
   def totalSampleDistributions(
       contigs: List[RDD[(String, SampleDistributions)]],
-      cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
+      cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
-      val sc = contigs.head.context
       sc.setJobGroup("Total Sample Distributions", "Total Sample Distributions")
       val emptyRdd = sc.parallelize(List("total" -> new SampleDistributions))
       Some(
@@ -480,9 +484,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   /** This will combine contigs stats and write the output file */
   def totalSampleCompare(contigs: List[RDD[(String, SampleCompare)]],
                          cmdArgs: Broadcast[Args],
-                         header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
+                         header: Broadcast[VCFHeader])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
-      val sc = contigs.head.context
       sc.setJobGroup("Total Sample Compare", "Total Sample Compare")
       val emptyRdd =
         sc.parallelize(List("total" -> new SampleCompare(header.value)))
@@ -536,11 +540,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
   def totalContigInfoFieldCounts(
       contigs: Map[VcfField, List[RDD[(String, InfoFieldCounts)]]],
       header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args]): Option[Future[Any]] = {
+      cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Any]] = {
     val futures: List[Future[Unit]] = (for ((field, counts) <- contigs) yield {
       if (counts.isEmpty) None
       else {
-        val sc = counts.head.context
         sc.setJobGroup(s"Total Info field counts: $field",
                        s"Total Info field counts: $field")
         val emptyRdd = sc.parallelize(
@@ -600,11 +604,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
   def totalContigGenotypeFieldCounts(
       contigs: Map[VcfField, List[RDD[(String, GenotypeFieldCounts)]]],
       header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args]): Option[Future[Any]] = {
+      cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Any]] = {
     val futures: List[Future[Unit]] = (for ((field, counts) <- contigs) yield {
       if (counts.isEmpty) None
       else {
-        val sc = counts.head.context
         sc.setJobGroup(s"Total Genotype field counts: $field",
                        s"Total Genotype field counts: $field")
         val emptyRdd = sc.parallelize(

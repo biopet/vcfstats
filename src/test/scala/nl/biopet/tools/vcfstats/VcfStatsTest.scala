@@ -250,7 +250,7 @@ class VcfStatsTest extends ToolTest[Args] {
     val tsv = new File(tmp, "info.DP_All.tsv")
     tsv should exist
     val lines = Source.fromFile(tsv).getLines().toList
-    lines.head shouldBe "value\tcount"
+    lines.headOption shouldBe Some("value\tcount")
     lines.tail shouldBe List(
       "1\t3",
       "2\t2",
@@ -279,7 +279,7 @@ class VcfStatsTest extends ToolTest[Args] {
     val tsv = new File(tmp, "genotype.DP_All.tsv")
     tsv should exist
     val lines = Source.fromFile(tsv).getLines().toList
-    lines.head shouldBe "Sample\tSample_3\tSample_2\tSample_1"
+    lines.headOption shouldBe Some("Sample\tSample_3\tSample_2\tSample_1")
     lines.tail shouldBe List(
       "1\t0\t1\t1",
       "5\t3\t2\t2"

@@ -46,8 +46,8 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
     genotype.foreach(_.addRecord(record))
     sampleDistributions.foreach(_.addRecord(record))
     sampleCompare.foreach(_.addRecord(record, cmdArgs.sampleToSampleMinDepth))
-    infoFields.foreach(_._2.addRecord(record))
-    genotypeFields.foreach(_._2.addRecord(record))
+    infoFields.values.foreach(_.addRecord(record))
+    genotypeFields.values.foreach(_.addRecord(record))
   }
 
   /** This combines stats classes into this */
@@ -82,10 +82,14 @@ case class StatsTotal(general: Option[vcf.GeneralStats],
       x.writeAllFiles(dir)
     }
 
-    infoFields.foreach(x =>
-      x._2.writeHistogram(new File(outputDir, s"info.${x._1}.tsv")))
-    genotypeFields.foreach(x =>
-      x._2.writeToFile(new File(outputDir, s"genotype.${x._1}.tsv")))
+    infoFields.foreach {
+      case (field, counts) =>
+        counts.writeHistogram(new File(outputDir, s"info.$field.tsv"))
+    }
+    genotypeFields.foreach {
+      case (field, counts) =>
+        counts.writeToFile(new File(outputDir, s"genotype.$field.tsv"))
+    }
   }
 }
 

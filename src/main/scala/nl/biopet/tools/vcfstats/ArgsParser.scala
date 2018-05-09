@@ -90,7 +90,8 @@ class ArgsParser(toolCommand: ToolCommand[Args])
     c.copy(
       sparkConfigValues = c.sparkConfigValues + ("spark.executor.memory" -> x))
   } text s"Spark executor memory to use"
-  opt[(String, String)]("sparkConfigValue") unbounded () action { (x, c) =>
-    c.copy(sparkConfigValues = c.sparkConfigValues + (x._1 -> x._2))
+  opt[(String, String)]("sparkConfigValue") unbounded () action {
+    case ((k, v), c) =>
+      c.copy(sparkConfigValues = c.sparkConfigValues + (k -> v))
   } text s"Add values to the spark config"
 }

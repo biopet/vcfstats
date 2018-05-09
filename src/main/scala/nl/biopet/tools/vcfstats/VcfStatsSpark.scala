@@ -106,7 +106,7 @@ object VcfStatsSpark extends ToolCommand[Args] {
           new File(cmdArgs.outputDir, "contigs" + File.separator + x).mkdirs())
       }
 
-      if (true) {
+      if (!cmdArgs.executeModulesAsJobs) {
         val contigsProcess = processContigTotal(shortContigs,
                                                 cmdArgsBroadcast,
                                                 header,
@@ -114,6 +114,8 @@ object VcfStatsSpark extends ToolCommand[Args] {
           (for ((contig, regions) <- longContigs) yield {
           processContigTotal(regions, cmdArgsBroadcast, header, Some(contig))
         })
+
+        sc.setJobGroup("Total stats", "Total stats")
 
         val futures = sc
           .union(contigsProcess.map(_._2))
@@ -203,16 +205,19 @@ object VcfStatsSpark extends ToolCommand[Args] {
                                  sorting = cmdArgs.value.repartition,
                                  countJob = false,
                                  cache = false)
-    logger.info(
-      s"$prefixMessage Vcf file in memory, submitting jobs to calculate stats")
 
     sc.setJobGroup(prefixMessage, prefixMessage)
+    val emptyStats = sc
+      .parallelize(regions.value.map(_.chr))
+      .map(_ -> StatsTotal.empty(header.value, cmdArgs.value))
     val contigStats = vcfRecords
       .keyBy(_.getContig)
       .aggregateByKey(StatsTotal.empty(header.value, cmdArgs.value))((a, b) => {
         a.addRecord(b, cmdArgs.value)
         a
       }, (a, b) => a += b)
+      .union(emptyStats)
+      .reduceByKey(_ += _)
 
     val contigFuture = contigStats.foreachAsync {
       case (c, stats) =>
@@ -236,10 +241,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
     val vcfRecords = loadVcfFile(cmdArgs,
                                  regions,
                                  prefixMessage,
-                                 sorting = cmdArgs.value.repartition)
-    logger.info(
-      s"$prefixMessage Vcf file in memory, submitting jobs to calculate stats")
-
+                                 sorting = cmdArgs.value.repartition,
+                                 countJob = false,
+                                 cache = false)
     val sampleCompare =
       contigSampleCompare(vcfRecords, header, cmdArgs, regions, prefixMessage)
     val generalStats =

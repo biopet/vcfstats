@@ -80,6 +80,9 @@ class ArgsParser(toolCommand: ToolCommand[Args])
   opt[Unit]("repartition") action { (_, c) =>
     c.copy(repartition = true)
   } text s"Repartition after reading records (only in spark mode)"
+  opt[Unit]("executeModulesAsJobs") action { (_, c) =>
+    c.copy(executeModulesAsJobs = true)
+  } text s"Execute modules as jobs (only in spark mode)"
   opt[String]("sparkMaster") action { (x, c) =>
     c.copy(sparkMaster = Some(x))
   } text s"Spark master to use"

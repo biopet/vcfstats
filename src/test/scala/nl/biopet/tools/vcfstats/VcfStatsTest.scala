@@ -24,7 +24,6 @@ package nl.biopet.tools.vcfstats
 import java.io.File
 import java.nio.file.Files
 
-import nl.biopet.test.BiopetTest
 import nl.biopet.utils.ngs.vcf.GenotypeStats
 import nl.biopet.utils.test.tools.ToolTest
 import nl.biopet.utils.tool.ToolCommand
@@ -45,6 +44,20 @@ class VcfStatsTest extends ToolTest[Args] {
       Array(VcfStatsSpark),
       Array(VcfStats)
     )
+  }
+
+  @DataProvider(name = "executablesModule")
+  def executablesModule(): Array[Array[AnyRef]] = {
+    Array(
+      Array(VcfStatsSpark, Boolean.box(true)),
+      Array(VcfStatsSpark, Boolean.box(false)),
+      Array(VcfStats, Boolean.box(false))
+    )
+  }
+
+  private def asModulesArgs(flag: Boolean): Array[String] = {
+    if (flag) Array("--executeModulesAsJobs")
+    else Array()
   }
 
   def testOutput(outputDir: File,
@@ -114,19 +127,23 @@ class VcfStatsTest extends ToolTest[Args] {
     }.getMessage shouldBe s"requirement failed: ${tmp.toAbsolutePath.toString} does not exist"
   }
 
-  @Test(dataProvider = "executables")
-  def testOutputDirNoDir(executable: ToolCommand[Args]): Unit = {
+  @Test(dataProvider = "executablesModule")
+  def testOutputDirNoDir(executable: ToolCommand[Args],
+                         modulesAsJobs: Boolean): Unit = {
     val tmp = File.createTempFile("vcfstats.", ".vcfstats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
     intercept[IllegalArgumentException] {
-      executable.main(Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath))
+      executable.main(
+        Array("-I", vcf, "-R", ref, "-o", tmp.getAbsolutePath) ++ asModulesArgs(
+          modulesAsJobs))
     }.getMessage shouldBe s"requirement failed: ${tmp.getAbsolutePath} is not a directory"
   }
 
-  @Test(dataProvider = "executables")
-  def testMultiBins(executable: ToolCommand[Args]): Unit = {
+  @Test(dataProvider = "executablesModule")
+  def testMultiBins(executable: ToolCommand[Args],
+                    modulesAsJobs: Boolean): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -139,23 +156,28 @@ class VcfStatsTest extends ToolTest[Args] {
             "-o",
             tmp.toAbsolutePath.toString,
             "--binSize",
-            "1000"))
+            "1000") ++ asModulesArgs(modulesAsJobs))
     testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
 
-  @Test(dataProvider = "executables")
-  def testMain(executable: ToolCommand[Args]): Unit = {
+  @Test(dataProvider = "executablesModule")
+  def testMain(executable: ToolCommand[Args], modulesAsJobs: Boolean): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
 
-    noException should be thrownBy executable.main(
-      Array("-I", vcf, "-R", ref, "-o", tmp.toAbsolutePath.toString))
+    noException should be thrownBy executable.main(Array(
+      "-I",
+      vcf,
+      "-R",
+      ref,
+      "-o",
+      tmp.toAbsolutePath.toString) ++ asModulesArgs(modulesAsJobs))
     testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
 
-  @Test(dataProvider = "executables")
-  def testSkips(executable: ToolCommand[Args]): Unit = {
+  @Test(dataProvider = "executablesModule")
+  def testSkips(executable: ToolCommand[Args], modulesAsJobs: Boolean): Unit = {
     val tmp = Files.createTempDirectory("vcfStats")
     val vcf = resourcePath("/chrQ.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -170,7 +192,7 @@ class VcfStatsTest extends ToolTest[Args] {
             "--skipGeneral",
             "--skipGenotype",
             "--skipSampleCompare",
-            "--skipSampleDistributions"))
+            "--skipSampleDistributions") ++ asModulesArgs(modulesAsJobs))
     testOutput(tmp.toFile,
                contigs = "chrQ" :: Nil,
                skipGeneral = true,
@@ -207,8 +229,9 @@ class VcfStatsTest extends ToolTest[Args] {
     testOutput(tmp.toFile, contigs = "chrQ" :: Nil)
   }
 
-  @Test(dataProvider = "executables")
-  def testInfoField(executable: ToolCommand[Args]): Unit = {
+  @Test(dataProvider = "executablesModule")
+  def testInfoField(executable: ToolCommand[Args],
+                    modulesAsJobs: Boolean): Unit = {
     val tmp = Files.createTempDirectory("vcfStats").toFile
     val vcf = resourcePath("/multi.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -221,7 +244,7 @@ class VcfStatsTest extends ToolTest[Args] {
             "-o",
             tmp.getAbsolutePath,
             "--infoTag",
-            "DP:All"))
+            "DP:All") ++ asModulesArgs(modulesAsJobs))
     testOutput(tmp, contigs = "chrQ" :: Nil)
 
     val tsv = new File(tmp, "info.DP_All.tsv")
@@ -235,8 +258,9 @@ class VcfStatsTest extends ToolTest[Args] {
     )
   }
 
-  @Test(dataProvider = "executables")
-  def testGenotypeField(executable: ToolCommand[Args]): Unit = {
+  @Test(dataProvider = "executablesModule")
+  def testGenotypeField(executable: ToolCommand[Args],
+                        modulesAsJobs: Boolean): Unit = {
     val tmp = Files.createTempDirectory("vcfStats").toFile
     val vcf = resourcePath("/multi.vcf.gz")
     val ref = resourcePath("/fake_chrQ.fa")
@@ -249,7 +273,7 @@ class VcfStatsTest extends ToolTest[Args] {
             "-o",
             tmp.getAbsolutePath,
             "--genotypeTag",
-            "DP:All"))
+            "DP:All") ++ asModulesArgs(modulesAsJobs))
     testOutput(tmp, contigs = "chrQ" :: Nil)
 
     val tsv = new File(tmp, "genotype.DP_All.tsv")

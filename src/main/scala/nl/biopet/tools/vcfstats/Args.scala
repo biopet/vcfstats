@@ -36,6 +36,7 @@ case class Args(inputFile: File = null,
                 writeBinStats: Boolean = false,
                 localThreads: Int = 1,
                 repartition: Boolean = false,
+                executeModulesAsJobs: Boolean = false,
                 notWriteContigStats: Boolean = false,
                 sparkMaster: Option[String] = None,
                 sparkConfigValues: Map[String, String] = Map(

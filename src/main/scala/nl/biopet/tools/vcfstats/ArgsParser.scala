@@ -77,6 +77,12 @@ class ArgsParser(toolCommand: ToolCommand[Args])
   opt[Unit]("skipSampleCompare") action { (_, c) =>
     c.copy(skipSampleCompare = true)
   } text s"Skipping sample compare"
+  opt[Unit]("repartition") action { (_, c) =>
+    c.copy(repartition = true)
+  } text s"Repartition after reading records (only in spark mode)"
+  opt[Unit]("executeModulesAsJobs") action { (_, c) =>
+    c.copy(executeModulesAsJobs = true)
+  } text s"Execute modules as jobs (only in spark mode)"
   opt[String]("sparkMaster") action { (x, c) =>
     c.copy(sparkMaster = Some(x))
   } text s"Spark master to use"
@@ -84,7 +90,8 @@ class ArgsParser(toolCommand: ToolCommand[Args])
     c.copy(
       sparkConfigValues = c.sparkConfigValues + ("spark.executor.memory" -> x))
   } text s"Spark executor memory to use"
-  opt[(String, String)]("sparkConfigValue") unbounded () action { (x, c) =>
-    c.copy(sparkConfigValues = c.sparkConfigValues + (x._1 -> x._2))
+  opt[(String, String)]("sparkConfigValue") unbounded () action {
+    case ((k, v), c) =>
+      c.copy(sparkConfigValues = c.sparkConfigValues + (k -> v))
   } text s"Add values to the spark config"
 }

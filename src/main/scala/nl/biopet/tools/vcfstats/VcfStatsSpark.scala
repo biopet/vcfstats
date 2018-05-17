@@ -87,68 +87,96 @@ object VcfStatsSpark extends ToolCommand[Args] {
       val cmdArgsBroadcast = sc.broadcast(cmdArgs)
       val header: Broadcast[VCFHeader] = sc.broadcast(reader.getFileHeader)
       val regions: Broadcast[List[BedRecord]] =
-        sc.broadcast(VcfStats.regions(cmdArgs))
+        sc.broadcast(VcfStats.createRegions(cmdArgs))
 
       val shortContigs = sc.broadcast(
         regions.value
           .groupBy(_.chr)
-          .filter(_._2.length == 1)
+          .filter { case (_, l) => l.length == 1 }
           .values
           .flatten
           .toList)
       val longContigs = regions.value
         .groupBy(_.chr)
-        .filter(_._2.length != 1)
-        .map(x => x._1 -> sc.broadcast(x._2))
+        .filter { case (_, l) => l.length != 1 }
+        .map { case (k, v) => k -> sc.broadcast(v) }
         .toList
+      if (!cmdArgs.notWriteContigStats) {
+        (shortContigs.value.map(_.chr) ::: longContigs.map {
+          case (contig, _) => contig
+        }.distinct).foreach(x =>
+          new File(cmdArgs.outputDir, "contigs" + File.separator + x).mkdirs())
+      }
 
-      val contigsProcess = processContig(shortContigs,
-                                         cmdArgsBroadcast,
-                                         header,
-                                         None) ::
-        (for ((contig, regions) <- longContigs) yield {
-        processContig(regions, cmdArgsBroadcast, header, Some(contig))
-      })
+      if (!cmdArgs.executeModulesAsJobs) {
+        val contigsProcess = processContigTotal(shortContigs,
+                                                cmdArgsBroadcast,
+                                                header,
+                                                None) ::
+          (for ((contig, regions) <- longContigs) yield {
+          processContigTotal(regions, cmdArgsBroadcast, header, Some(contig))
+        })
 
-      val generalStats = totalGeneralStats(
-        contigsProcess.flatMap(_.generalStats),
-        cmdArgsBroadcast)
-      val genotypeStats = totalGenotypeStats(
-        contigsProcess.flatMap(_.genotypeStats),
-        cmdArgsBroadcast,
-        header)
-      val sampleDistributions = totalSampleDistributions(
-        contigsProcess.flatMap(_.sampleDistributions),
-        cmdArgsBroadcast)
-      val sampleCompare = totalSampleCompare(
-        contigsProcess.flatMap(_.sampleCompare),
-        cmdArgsBroadcast,
-        header)
-      val infoFieldCounts = totalContigInfoFieldCounts(
-        cmdArgs.infoTags
-          .map(x => x -> contigsProcess.flatMap(_.infoFieldCounts.get(x)))
-          .toMap,
-        header,
-        cmdArgsBroadcast)
-      val genotypeFieldCounts = totalContigGenotypeFieldCounts(
-        cmdArgs.genotypeTags
-          .map(x => x -> contigsProcess.flatMap(_.genotypeFieldCounts.get(x)))
-          .toMap,
-        header,
-        cmdArgsBroadcast)
+        sc.setJobGroup("Total stats", "Total stats")
 
-      logger.info("Done submitting jobs")
+        val futures = sc
+          .union(contigsProcess.map { case (_, x) => x })
+          .map { case (_, stats) => None -> stats }
+          .reduceByKey(_ += _)
+          .foreachAsync {
+            case (_, stats) => stats.writeStats(cmdArgs.outputDir)
+          } :: contigsProcess
+          .map { case (future, _) => future }
+        Await.result(Future.sequence(futures), Duration.Inf)
+      } else {
+        val contigsProcess = processContig(shortContigs,
+                                           cmdArgsBroadcast,
+                                           header,
+                                           None) ::
+          (for ((contig, regions) <- longContigs) yield {
+          processContig(regions, cmdArgsBroadcast, header, Some(contig))
+        })
 
-      Await.result(Future.sequence(contigsProcess.map(_.contigFuture)),
-                   Duration.Inf)
-      Await.result(Future.sequence(
-                     List(generalStats,
-                          genotypeStats,
-                          sampleDistributions,
-                          sampleCompare,
-                          infoFieldCounts,
-                          genotypeFieldCounts).flatten),
-                   Duration.Inf)
+        val generalStats = totalGeneralStats(
+          contigsProcess.flatMap(_.generalStats),
+          cmdArgsBroadcast)
+        val genotypeStats = totalGenotypeStats(
+          contigsProcess.flatMap(_.genotypeStats),
+          cmdArgsBroadcast,
+          header)
+        val sampleDistributions = totalSampleDistributions(
+          contigsProcess.flatMap(_.sampleDistributions),
+          cmdArgsBroadcast)
+        val sampleCompare = totalSampleCompare(
+          contigsProcess.flatMap(_.sampleCompare),
+          cmdArgsBroadcast,
+          header)
+        val infoFieldCounts = totalContigInfoFieldCounts(
+          cmdArgs.infoTags
+            .map(x => x -> contigsProcess.flatMap(_.infoFieldCounts.get(x)))
+            .toMap,
+          header,
+          cmdArgsBroadcast)
+        val genotypeFieldCounts = totalContigGenotypeFieldCounts(
+          cmdArgs.genotypeTags
+            .map(x => x -> contigsProcess.flatMap(_.genotypeFieldCounts.get(x)))
+            .toMap,
+          header,
+          cmdArgsBroadcast)
+
+        logger.info("Done submitting jobs")
+
+        Await.result(Future.sequence(contigsProcess.map(_.contigFuture)),
+                     Duration.Inf)
+        Await.result(Future.sequence(
+                       List(generalStats,
+                            genotypeStats,
+                            sampleDistributions,
+                            sampleCompare,
+                            infoFieldCounts,
+                            genotypeFieldCounts).flatten),
+                     Duration.Inf)
+      }
     } finally {
       sc.stop()
     }
@@ -165,6 +193,44 @@ object VcfStatsSpark extends ToolCommand[Args] {
       infoFieldCounts: Map[VcfField, RDD[(String, InfoFieldCounts)]],
       genotypeFieldCounts: Map[VcfField, RDD[(String, GenotypeFieldCounts)]])
 
+  def processContigTotal(regions: Broadcast[List[BedRecord]],
+                         cmdArgs: Broadcast[Args],
+                         header: Broadcast[VCFHeader],
+                         contig: Option[String])(
+      implicit sc: SparkContext): (Future[Unit], RDD[(String, StatsTotal)]) = {
+    val prefixMessage = contig match {
+      case Some(c) => s"Contig $c:"
+      case _       => "Small contigs:"
+    }
+    logger.info(s"$prefixMessage Start reading vcf file")
+    val vcfRecords = loadVcfFile(cmdArgs,
+                                 regions,
+                                 prefixMessage,
+                                 sorting = cmdArgs.value.repartition,
+                                 countJob = false,
+                                 cache = false)
+
+    sc.setJobGroup(prefixMessage, prefixMessage)
+    val emptyStats = sc
+      .parallelize(regions.value.map(_.chr))
+      .map(_ -> StatsTotal.empty(header.value, cmdArgs.value))
+    val contigStats = vcfRecords
+      .keyBy(_.getContig)
+      .aggregateByKey(StatsTotal.empty(header.value, cmdArgs.value))((a, b) => {
+        a.addRecord(b, cmdArgs.value)
+        a
+      }, (a, b) => a += b)
+      .union(emptyStats)
+      .reduceByKey(_ += _)
+
+    val contigFuture = contigStats.foreachAsync {
+      case (c, stats) =>
+        stats.writeStats(
+          new File(cmdArgs.value.outputDir, "contigs" + File.separator + c))
+    }
+    (contigFuture, contigStats)
+  }
+
   /** This method will execute a list of regions. */
   def processContig(
       regions: Broadcast[List[BedRecord]],
@@ -176,17 +242,19 @@ object VcfStatsSpark extends ToolCommand[Args] {
       case _       => "Small contigs:"
     }
     logger.info(s"$prefixMessage Start reading vcf file")
-    val vcfRecords = loadVcfFile(cmdArgs, regions, prefixMessage)
-    logger.info(
-      s"$prefixMessage Vcf file in memory, submitting jobs to calculate stats")
-
-    val sampleCompare =
+    val vcfRecords = loadVcfFile(cmdArgs,
+                                 regions,
+                                 prefixMessage,
+                                 sorting = cmdArgs.value.repartition,
+                                 countJob = false,
+                                 cache = false)
+    val (compareFuture, sampleCompare) =
       contigSampleCompare(vcfRecords, header, cmdArgs, regions, prefixMessage)
-    val generalStats =
+    val (generalFuture, generalStats) =
       contigGeneralStats(vcfRecords, cmdArgs, regions, prefixMessage)
-    val genotypeStats =
+    val (genotypeFuture, genotypeStats) =
       contigGenotypeStats(vcfRecords, header, cmdArgs, regions, prefixMessage)
-    val sampleDistribution =
+    val (distributionFuture, sampleDistribution) =
       contigSampleDistributions(vcfRecords, cmdArgs, regions, prefixMessage)
 
     logger.info("Submitting infoFieldCounts jobs")
@@ -203,19 +271,19 @@ object VcfStatsSpark extends ToolCommand[Args] {
     vcfRecords.unpersist()
 
     val contigOutputFuture = Future.sequence(
-      sampleCompare._1.toList ::: generalStats._1.toList ::: sampleDistribution._1.toList :::
-        genotypeStats._1.toList ::: infoCounts
-        .flatMap(_._2._1)
-        .toList ::: genotypeCounts.flatMap(_._2._1).toList)
+      compareFuture.toList ::: generalFuture.toList ::: distributionFuture.toList :::
+        genotypeFuture.toList ::: infoCounts.flatMap { case (_, (x, _)) => x }.toList ::: genotypeCounts.flatMap {
+        case (_, (x, _))                                                => x
+      }.toList)
 
     ChunkResult(
       contigOutputFuture,
-      generalStats._2,
-      genotypeStats._2,
-      sampleDistribution._2,
-      sampleCompare._2,
-      infoCounts.map(x => x._1 -> x._2._2),
-      genotypeCounts.map(x => x._1 -> x._2._2)
+      generalStats,
+      genotypeStats,
+      sampleDistribution,
+      sampleCompare,
+      infoCounts.map { case (k, (_, v))     => k -> v },
+      genotypeCounts.map { case (k, (_, v)) => k -> v }
     )
   }
 
@@ -227,15 +295,19 @@ object VcfStatsSpark extends ToolCommand[Args] {
   def loadVcfFile(
       cmdArgs: Broadcast[Args],
       regions: Broadcast[List[BedRecord]],
-      prefixMessage: String)(implicit sc: SparkContext): RDD[VariantContext] = {
+      prefixMessage: String,
+      sorting: Boolean = true,
+      countJob: Boolean = true,
+      cache: Boolean = true)(implicit sc: SparkContext): RDD[VariantContext] = {
     sc.setJobGroup(s"$prefixMessage Loading Vcf Records",
                    s"$prefixMessage Loading Vcf Records")
     val vcfRecords = spark.vcf
       .loadRecords(cmdArgs.value.inputFile,
                    regions,
                    cmdArgs.value.binSize,
-                   cached = true)
-    vcfRecords.countAsync()
+                   cached = cache,
+                   sorting = sorting)
+    if (countJob) vcfRecords.countAsync()
     sc.clearJobGroup()
     vcfRecords
   }
@@ -267,9 +339,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
 
   /** This will combine contigs stats and write the output file */
   def totalGeneralStats(generalContig: List[RDD[(String, GeneralStats)]],
-                        cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
+                        cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (generalContig.nonEmpty) {
-      val sc = generalContig.head.context
       sc.setJobGroup("Total General stats", "Total General stats")
       val emptyRdd = sc.parallelize(List("total" -> new GeneralStats()))
       Some(
@@ -312,9 +384,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   /** This will combine contigs stats and write the output file */
   def totalGenotypeStats(contigs: List[RDD[(String, GenotypeStats)]],
                          cmdArgs: Broadcast[Args],
-                         header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
+                         header: Broadcast[VCFHeader])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
-      val sc = contigs.head.context
       sc.setJobGroup("Total Genotype stats", "Total Genotype stats")
       val emptyRdd =
         sc.parallelize(List("total" -> new GenotypeStats(header.value)))
@@ -359,9 +431,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   /** This will combine contigs stats and write the output file */
   def totalSampleDistributions(
       contigs: List[RDD[(String, SampleDistributions)]],
-      cmdArgs: Broadcast[Args]): Option[Future[Unit]] = {
+      cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
-      val sc = contigs.head.context
       sc.setJobGroup("Total Sample Distributions", "Total Sample Distributions")
       val emptyRdd = sc.parallelize(List("total" -> new SampleDistributions))
       Some(
@@ -412,9 +484,9 @@ object VcfStatsSpark extends ToolCommand[Args] {
   /** This will combine contigs stats and write the output file */
   def totalSampleCompare(contigs: List[RDD[(String, SampleCompare)]],
                          cmdArgs: Broadcast[Args],
-                         header: Broadcast[VCFHeader]): Option[Future[Unit]] = {
+                         header: Broadcast[VCFHeader])(
+      implicit sc: SparkContext): Option[Future[Unit]] = {
     if (contigs.nonEmpty) {
-      val sc = contigs.head.context
       sc.setJobGroup("Total Sample Compare", "Total Sample Compare")
       val emptyRdd =
         sc.parallelize(List("total" -> new SampleCompare(header.value)))
@@ -468,11 +540,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
   def totalContigInfoFieldCounts(
       contigs: Map[VcfField, List[RDD[(String, InfoFieldCounts)]]],
       header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args]): Option[Future[Any]] = {
+      cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Any]] = {
     val futures: List[Future[Unit]] = (for ((field, counts) <- contigs) yield {
       if (counts.isEmpty) None
       else {
-        val sc = counts.head.context
         sc.setJobGroup(s"Total Info field counts: $field",
                        s"Total Info field counts: $field")
         val emptyRdd = sc.parallelize(
@@ -532,11 +604,11 @@ object VcfStatsSpark extends ToolCommand[Args] {
   def totalContigGenotypeFieldCounts(
       contigs: Map[VcfField, List[RDD[(String, GenotypeFieldCounts)]]],
       header: Broadcast[VCFHeader],
-      cmdArgs: Broadcast[Args]): Option[Future[Any]] = {
+      cmdArgs: Broadcast[Args])(
+      implicit sc: SparkContext): Option[Future[Any]] = {
     val futures: List[Future[Unit]] = (for ((field, counts) <- contigs) yield {
       if (counts.isEmpty) None
       else {
-        val sc = counts.head.context
         sc.setJobGroup(s"Total Genotype field counts: $field",
                        s"Total Genotype field counts: $field")
         val emptyRdd = sc.parallelize(

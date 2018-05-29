@@ -94,6 +94,8 @@ class VcfStatsTest extends ToolTest[Args] {
         new File(sampleCompareDir, "allele.rel.tsv") should exist
         new File(sampleCompareDir, "genotype.abs.tsv") should exist
         new File(sampleCompareDir, "genotype.rel.tsv") should exist
+        new File(sampleCompareDir, "genotype.ref.abs.tsv") should exist
+        new File(sampleCompareDir, "allele.ref.abs.tsv") should exist
       }
     }
 

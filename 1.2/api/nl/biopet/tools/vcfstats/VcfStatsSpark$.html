@@ -1,0 +1,1272 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>VcfStatsSpark - nl.biopet.tools.vcfstats.VcfStatsSpark</title>
+          <meta name="description" content="VcfStatsSpark - nl.biopet.tools.vcfstats.VcfStatsSpark" />
+          <meta name="keywords" content="VcfStatsSpark nl.biopet.tools.vcfstats.VcfStatsSpark" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'nl.biopet.tools.vcfstats.VcfStatsSpark$';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Object" src="../../../../lib/object_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="nl">nl</a>.<a href="../../package.html" class="extype" name="nl.biopet">biopet</a>.<a href="../package.html" class="extype" name="nl.biopet.tools">tools</a>.<a href="package.html" class="extype" name="nl.biopet.tools.vcfstats">vcfstats</a></p>
+        <h1>VcfStatsSpark</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="nl.biopet.tools.vcfstats">package vcfstats</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <span class="name">VcfStatsSpark</span><span class="result"> extends <span class="extype" name="nl.biopet.utils.tool.ToolCommand">ToolCommand</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>This tool can generate metrics from a vcf file.
+This version of the tool run on Apache Spark</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="nl.biopet.utils.tool.ToolCommand">ToolCommand</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>], <span class="extype" name="nl.biopet.utils.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="nl.biopet.tools.vcfstats.VcfStatsSpark"><span>VcfStatsSpark</span></li><li class="in" name="nl.biopet.utils.tool.ToolCommand"><span>ToolCommand</span></li><li class="in" name="nl.biopet.utils.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show All</span></li>
+            </ol>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="nl.biopet.tools.vcfstats.VcfStatsSpark.ChunkResult" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ChunkResultextendsProductwithSerializable"></a>
+      <a id="ChunkResult:ChunkResult"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="VcfStatsSpark$$ChunkResult.html"><span class="name">ChunkResult</span></a><span class="params">(<span name="contigFuture">contigFuture: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Any">Any</span>]</span>, <span name="generalStats">generalStats: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GeneralStats">GeneralStats</span>)]]</span>, <span name="genotypeStats">genotypeStats: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GenotypeStats">GenotypeStats</span>)]]</span>, <span name="sampleDistributions">sampleDistributions: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.SampleDistributions">SampleDistributions</span>)]]</span>, <span name="sampleCompare">sampleCompare: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.SampleCompare">SampleCompare</span>)]]</span>, <span name="infoFieldCounts">infoFieldCounts: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="nl.biopet.utils.ngs.vcf.VcfField">VcfField</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.InfoFieldCounts">InfoFieldCounts</span>)]]</span>, <span name="genotypeFieldCounts">genotypeFieldCounts: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="nl.biopet.utils.ngs.vcf.VcfField">VcfField</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GenotypeFieldCounts">GenotypeFieldCounts</span>)]]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@ChunkResultextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This is a class to collect results from 1 chunk</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@##():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#aboutText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="aboutText:String"></a>
+      <a id="aboutText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">aboutText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@aboutText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#argsParser" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="argsParser:nl.biopet.tools.vcfstats.ArgsParser"></a>
+      <a id="argsParser:ArgsParser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">argsParser</span><span class="result">: <a href="ArgsParser.html" class="extype" name="nl.biopet.tools.vcfstats.ArgsParser">ArgsParser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@argsParser:nl.biopet.tools.vcfstats.ArgsParser" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark">VcfStatsSpark</a> → ToolCommand</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#cmdArrayToArgs" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="cmdArrayToArgs(args:Array[String]):Args"></a>
+      <a id="cmdArrayToArgs(Array[String]):Args"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">cmdArrayToArgs</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@cmdArrayToArgs(args:Array[String]):Args" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#contactText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="contactText:String"></a>
+      <a id="contactText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contactText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contactText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigDir" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigDir(outputDir:java.io.File,contig:String):java.io.File"></a>
+      <a id="contigDir(File,String):File"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigDir</span><span class="params">(<span name="outputDir">outputDir: <span class="extype" name="java.io.File">File</span></span>, <span name="contig">contig: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="java.io.File">File</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigDir(outputDir:java.io.File,contig:String):java.io.File" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns the contig dir of a given contig</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigGeneralStats" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigGeneralStats(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GeneralStats)]])"></a>
+      <a id="contigGeneralStats(RDD[VariantContext],Broadcast[Args],Broadcast[List[BedRecord]],String):(Option[FutureAction[Unit]],Option[RDD[(String,GeneralStats)]])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigGeneralStats</span><span class="params">(<span name="vcfRecords">vcfRecords: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.FutureAction">FutureAction</span>[<span class="extype" name="scala.Unit">Unit</span>]], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GeneralStats">GeneralStats</span>)]])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigGeneralStats(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GeneralStats)]])" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will generate contigs stats and write this if this is not disabled</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigGenotypeFieldCounts" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigGenotypeFieldCounts(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):Map[nl.biopet.utils.ngs.vcf.VcfField,(Option[scala.concurrent.Future[Unit]],org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeFieldCounts)])]"></a>
+      <a id="contigGenotypeFieldCounts(RDD[VariantContext],Broadcast[VCFHeader],Broadcast[Args],Broadcast[List[BedRecord]],String):Map[VcfField,(Option[Future[Unit]],RDD[(String,GenotypeFieldCounts)])]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigGenotypeFieldCounts</span><span class="params">(<span name="vcfRecords">vcfRecords: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="nl.biopet.utils.ngs.vcf.VcfField">VcfField</span>, (<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>]], <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GenotypeFieldCounts">GenotypeFieldCounts</span>)])]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigGenotypeFieldCounts(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):Map[nl.biopet.utils.ngs.vcf.VcfField,(Option[scala.concurrent.Future[Unit]],org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeFieldCounts)])]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will generate contigs stats and write this if this is not disabled</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigGenotypeStats" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigGenotypeStats(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeStats)]])"></a>
+      <a id="contigGenotypeStats(RDD[VariantContext],Broadcast[VCFHeader],Broadcast[Args],Broadcast[List[BedRecord]],String):(Option[FutureAction[Unit]],Option[RDD[(String,GenotypeStats)]])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigGenotypeStats</span><span class="params">(<span name="vcfRecords">vcfRecords: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.FutureAction">FutureAction</span>[<span class="extype" name="scala.Unit">Unit</span>]], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GenotypeStats">GenotypeStats</span>)]])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigGenotypeStats(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeStats)]])" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will generate contigs stats and write this if this is not disabled</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigInfoFieldCounts" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigInfoFieldCounts(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):Map[nl.biopet.utils.ngs.vcf.VcfField,(Option[scala.concurrent.Future[Unit]],org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.InfoFieldCounts)])]"></a>
+      <a id="contigInfoFieldCounts(RDD[VariantContext],Broadcast[VCFHeader],Broadcast[Args],Broadcast[List[BedRecord]],String):Map[VcfField,(Option[Future[Unit]],RDD[(String,InfoFieldCounts)])]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigInfoFieldCounts</span><span class="params">(<span name="vcfRecords">vcfRecords: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="nl.biopet.utils.ngs.vcf.VcfField">VcfField</span>, (<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>]], <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.InfoFieldCounts">InfoFieldCounts</span>)])]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigInfoFieldCounts(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):Map[nl.biopet.utils.ngs.vcf.VcfField,(Option[scala.concurrent.Future[Unit]],org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.InfoFieldCounts)])]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will generate contigs stats and write this if this is not disabled</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigSampleCompare" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigSampleCompare(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleCompare)]])"></a>
+      <a id="contigSampleCompare(RDD[VariantContext],Broadcast[VCFHeader],Broadcast[Args],Broadcast[List[BedRecord]],String):(Option[FutureAction[Unit]],Option[RDD[(String,SampleCompare)]])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigSampleCompare</span><span class="params">(<span name="vcfRecords">vcfRecords: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.FutureAction">FutureAction</span>[<span class="extype" name="scala.Unit">Unit</span>]], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.SampleCompare">SampleCompare</span>)]])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigSampleCompare(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleCompare)]])" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will generate contigs stats and write this if this is not disabled</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#contigSampleDistributions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="contigSampleDistributions(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleDistributions)]])"></a>
+      <a id="contigSampleDistributions(RDD[VariantContext],Broadcast[Args],Broadcast[List[BedRecord]],String):(Option[FutureAction[Unit]],Option[RDD[(String,SampleDistributions)]])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contigSampleDistributions</span><span class="params">(<span name="vcfRecords">vcfRecords: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.FutureAction">FutureAction</span>[<span class="extype" name="scala.Unit">Unit</span>]], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.SampleDistributions">SampleDistributions</span>)]])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contigSampleDistributions(vcfRecords:org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String):(Option[org.apache.spark.FutureAction[Unit]],Option[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleDistributions)]])" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will generate contigs stats and write this if this is not disabled</p>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#contributingText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="contributingText:String"></a>
+      <a id="contributingText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contributingText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@contributingText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#descriptionText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="descriptionText:String"></a>
+      <a id="descriptionText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">descriptionText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@descriptionText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark">VcfStatsSpark</a> → ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#documentationText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="documentationText:String"></a>
+      <a id="documentationText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">documentationText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@documentationText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#emptyArgs" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="emptyArgs:nl.biopet.tools.vcfstats.Args"></a>
+      <a id="emptyArgs:Args"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">emptyArgs</span><span class="result">: <a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@emptyArgs:nl.biopet.tools.vcfstats.Args" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark">VcfStatsSpark</a> → ToolCommand</dd></dl></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#example" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="example(args:String*):String"></a>
+      <a id="example(String*):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">example</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@example(args:String*):String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#exampleText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="exampleText:String"></a>
+      <a id="exampleText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">exampleText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@exampleText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark">VcfStatsSpark</a> → ToolCommand</dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#generateDocumentation" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="generateDocumentation(outputDirectory:&lt;?&gt;,version:&lt;?&gt;,release:&lt;?&gt;):Unit"></a>
+      <a id="generateDocumentation(File,String,Boolean):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">generateDocumentation</span><span class="params">(<span name="outputDirectory">outputDirectory: <span class="extype" name="java.io.File">File</span></span>, <span name="version">version: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="release">release: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@generateDocumentation(outputDirectory:java.io.File,version:String,release:Boolean):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#generateReadme" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="generateReadme(outputFile:&lt;?&gt;):Unit"></a>
+      <a id="generateReadme(File):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">generateReadme</span><span class="params">(<span name="outputFile">outputFile: <span class="extype" name="java.io.File">File</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@generateReadme(outputFile:java.io.File):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#installationText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="installationText:String"></a>
+      <a id="installationText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">installationText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@installationText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#loadVcfFile" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="loadVcfFile(cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String,sorting:Boolean,countJob:Boolean,cache:Boolean)(implicitsc:org.apache.spark.SparkContext):org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext]"></a>
+      <a id="loadVcfFile(Broadcast[Args],Broadcast[List[BedRecord]],String,Boolean,Boolean,Boolean)(SparkContext):RDD[VariantContext]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loadVcfFile</span><span class="params">(<span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="prefixMessage">prefixMessage: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sorting">sorting: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="countJob">countJob: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="cache">cache: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="htsjdk.variant.variantcontext.VariantContext">VariantContext</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@loadVcfFile(cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],prefixMessage:String,sorting:Boolean,countJob:Boolean,cache:Boolean)(implicitsc:org.apache.spark.SparkContext):org.apache.spark.rdd.RDD[htsjdk.variant.variantcontext.VariantContext]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This method will load a list of regions into memory</p>
+    </li><li name="nl.biopet.utils.Logging#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:org.apache.log4j.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="org.apache.log4j.Logger">Logger</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@logger:org.apache.log4j.Logger" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Logging</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#main" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="main(args:Array[String]):Unit"></a>
+      <a id="main(Array[String]):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">main</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@main(args:Array[String]):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Main entry point from the commandline</p><div class="fullcomment"><div class="comment cmt"><p>Main entry point from the commandline</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark">VcfStatsSpark</a> → ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#mainFromArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="mainFromArgs(cmdArgs:nl.biopet.tools.vcfstats.Args):Unit"></a>
+      <a id="mainFromArgs(Args):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mainFromArgs</span><span class="params">(<span name="cmdArgs">cmdArgs: <a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@mainFromArgs(cmdArgs:nl.biopet.tools.vcfstats.Args):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">API entry point</p>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#mainPageContents" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="mainPageContents:List[(String,String)]"></a>
+      <a id="mainPageContents:List[(String,String)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mainPageContents</span><span class="result">: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@mainPageContents:List[(String,String)]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#manualText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="manualText:String"></a>
+      <a id="manualText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">manualText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@manualText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark">VcfStatsSpark</a> → ToolCommand</dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#processContig" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="processContig(regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],contig:Option[String])(implicitsc:org.apache.spark.SparkContext):nl.biopet.tools.vcfstats.VcfStatsSpark.ChunkResult"></a>
+      <a id="processContig(Broadcast[List[BedRecord]],Broadcast[Args],Broadcast[VCFHeader],Option[String])(SparkContext):ChunkResult"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">processContig</span><span class="params">(<span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="contig">contig: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <a href="VcfStatsSpark$$ChunkResult.html" class="extype" name="nl.biopet.tools.vcfstats.VcfStatsSpark.ChunkResult">ChunkResult</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@processContig(regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],contig:Option[String])(implicitsc:org.apache.spark.SparkContext):nl.biopet.tools.vcfstats.VcfStatsSpark.ChunkResult" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This method will execute a list of regions.</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#processContigTotal" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="processContigTotal(regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],contig:Option[String])(implicitsc:org.apache.spark.SparkContext):(scala.concurrent.Future[Unit],org.apache.spark.rdd.RDD[(String,nl.biopet.tools.vcfstats.StatsTotal)])"></a>
+      <a id="processContigTotal(Broadcast[List[BedRecord]],Broadcast[Args],Broadcast[VCFHeader],Option[String])(SparkContext):(Future[Unit],RDD[(String,StatsTotal)])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">processContigTotal</span><span class="params">(<span name="regions">regions: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="nl.biopet.utils.ngs.intervals.BedRecord">BedRecord</span>]]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="contig">contig: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: (<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>], <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <a href="StatsTotal.html" class="extype" name="nl.biopet.tools.vcfstats.StatsTotal">StatsTotal</a>)])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@processContigTotal(regions:org.apache.spark.broadcast.Broadcast[List[nl.biopet.utils.ngs.intervals.BedRecord]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],contig:Option[String])(implicitsc:org.apache.spark.SparkContext):(scala.concurrent.Future[Unit],org.apache.spark.rdd.RDD[(String,nl.biopet.tools.vcfstats.StatsTotal)])" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="nl.biopet.utils.tool.ToolCommand#readmeContents" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readmeContents:List[(String,String)]"></a>
+      <a id="readmeContents:List[(String,String)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readmeContents</span><span class="result">: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@readmeContents:List[(String,String)]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#sparkExample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sparkExample(args:String*):String"></a>
+      <a id="sparkExample(String*):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sparkExample</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@sparkExample(args:String*):String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#sparkUnsafeExample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sparkUnsafeExample(args:&lt;?&gt;):String"></a>
+      <a id="sparkUnsafeExample(String*):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sparkUnsafeExample</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@sparkUnsafeExample(args:String*):String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@toString():String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#toolName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toolName:String"></a>
+      <a id="toolName:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toolName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@toolName:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#totalContigGenotypeFieldCounts" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="totalContigGenotypeFieldCounts(contigs:Map[nl.biopet.utils.ngs.vcf.VcfField,List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeFieldCounts)]]],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Any]]"></a>
+      <a id="totalContigGenotypeFieldCounts(Map[VcfField,List[RDD[(String,GenotypeFieldCounts)]]],Broadcast[VCFHeader],Broadcast[Args])(SparkContext):Option[Future[Any]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">totalContigGenotypeFieldCounts</span><span class="params">(<span name="contigs">contigs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="nl.biopet.utils.ngs.vcf.VcfField">VcfField</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GenotypeFieldCounts">GenotypeFieldCounts</span>)]]]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Any">Any</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@totalContigGenotypeFieldCounts(contigs:Map[nl.biopet.utils.ngs.vcf.VcfField,List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeFieldCounts)]]],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Any]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will combine contigs stats and write the output file</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#totalContigInfoFieldCounts" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="totalContigInfoFieldCounts(contigs:Map[nl.biopet.utils.ngs.vcf.VcfField,List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.InfoFieldCounts)]]],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Any]]"></a>
+      <a id="totalContigInfoFieldCounts(Map[VcfField,List[RDD[(String,InfoFieldCounts)]]],Broadcast[VCFHeader],Broadcast[Args])(SparkContext):Option[Future[Any]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">totalContigInfoFieldCounts</span><span class="params">(<span name="contigs">contigs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="nl.biopet.utils.ngs.vcf.VcfField">VcfField</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.InfoFieldCounts">InfoFieldCounts</span>)]]]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Any">Any</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@totalContigInfoFieldCounts(contigs:Map[nl.biopet.utils.ngs.vcf.VcfField,List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.InfoFieldCounts)]]],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Any]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will combine contigs stats and write the output file</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#totalGeneralStats" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="totalGeneralStats(generalContig:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GeneralStats)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]"></a>
+      <a id="totalGeneralStats(List[RDD[(String,GeneralStats)]],Broadcast[Args])(SparkContext):Option[Future[Unit]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">totalGeneralStats</span><span class="params">(<span name="generalContig">generalContig: <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GeneralStats">GeneralStats</span>)]]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@totalGeneralStats(generalContig:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GeneralStats)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will combine contigs stats and write the output file</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#totalGenotypeStats" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="totalGenotypeStats(contigs:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeStats)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]"></a>
+      <a id="totalGenotypeStats(List[RDD[(String,GenotypeStats)]],Broadcast[Args],Broadcast[VCFHeader])(SparkContext):Option[Future[Unit]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">totalGenotypeStats</span><span class="params">(<span name="contigs">contigs: <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.GenotypeStats">GenotypeStats</span>)]]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@totalGenotypeStats(contigs:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.GenotypeStats)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will combine contigs stats and write the output file</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#totalSampleCompare" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="totalSampleCompare(contigs:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleCompare)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]"></a>
+      <a id="totalSampleCompare(List[RDD[(String,SampleCompare)]],Broadcast[Args],Broadcast[VCFHeader])(SparkContext):Option[Future[Unit]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">totalSampleCompare</span><span class="params">(<span name="contigs">contigs: <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.SampleCompare">SampleCompare</span>)]]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>, <span name="header">header: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<span class="extype" name="htsjdk.variant.vcf.VCFHeader">VCFHeader</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@totalSampleCompare(contigs:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleCompare)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args],header:org.apache.spark.broadcast.Broadcast[htsjdk.variant.vcf.VCFHeader])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will combine contigs stats and write the output file</p>
+    </li><li name="nl.biopet.tools.vcfstats.VcfStatsSpark#totalSampleDistributions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="totalSampleDistributions(contigs:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleDistributions)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]"></a>
+      <a id="totalSampleDistributions(List[RDD[(String,SampleDistributions)]],Broadcast[Args])(SparkContext):Option[Future[Unit]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">totalSampleDistributions</span><span class="params">(<span name="contigs">contigs: <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="nl.biopet.utils.ngs.vcf.SampleDistributions">SampleDistributions</span>)]]</span>, <span name="cmdArgs">cmdArgs: <span class="extype" name="org.apache.spark.broadcast.Broadcast">Broadcast</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Unit">Unit</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@totalSampleDistributions(contigs:List[org.apache.spark.rdd.RDD[(String,nl.biopet.utils.ngs.vcf.SampleDistributions)]],cmdArgs:org.apache.spark.broadcast.Broadcast[nl.biopet.tools.vcfstats.Args])(implicitsc:org.apache.spark.SparkContext):Option[scala.concurrent.Future[Unit]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This will combine contigs stats and write the output file</p>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#unsafeExample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="unsafeExample(args:&lt;?&gt;):String"></a>
+      <a id="unsafeExample(String*):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">unsafeExample</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@unsafeExample(args:String*):String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#urlToolName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="urlToolName:String"></a>
+      <a id="urlToolName:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">urlToolName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@urlToolName:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#usageHeaders" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="usageHeaders:List[String]"></a>
+      <a id="usageHeaders:List[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">usageHeaders</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@usageHeaders:List[String]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#usageHtmlTable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="usageHtmlTable:String"></a>
+      <a id="usageHtmlTable:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">usageHtmlTable</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@usageHtmlTable:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#usageRows" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="usageRows(parser:&lt;?&gt;):List[List[String]]"></a>
+      <a id="usageRows(OptionParser[Args]):List[List[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">usageRows</span><span class="params">(<span name="parser">parser: <span class="extype" name="scopt.OptionParser">OptionParser</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</span>)</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@usageRows(parser:scopt.OptionParser[Args]):List[List[String]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#usageText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="usageText:String"></a>
+      <a id="usageText:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">usageText</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@usageText:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="nl.biopet.utils.tool.ToolCommand#validateArgs" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateArgs(args:&lt;?&gt;):Unit"></a>
+      <a id="validateArgs(String*):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateArgs</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@validateArgs(args:String*):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ToolCommand</dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#nl.biopet.tools.vcfstats.VcfStatsSpark$@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="nl.biopet.utils.tool.ToolCommand">
+              <h3>Inherited from <span class="extype" name="nl.biopet.utils.tool.ToolCommand">ToolCommand</span>[<a href="Args.html" class="extype" name="nl.biopet.tools.vcfstats.Args">Args</a>]</h3>
+            </div><div class="parent" name="nl.biopet.utils.Logging">
+              <h3>Inherited from <span class="extype" name="nl.biopet.utils.Logging">Logging</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

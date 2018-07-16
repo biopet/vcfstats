@@ -3,11 +3,11 @@
 
 Vcfstats is a tool that can generate metrics from a vcf file.
 
- - General stats (default, can be disabled)
- - Genotype stats (default, can be disabled)
- - Sample compare (default, can be disabled)
- - Sample distributions (default, can be disabled)
- - Field histograms
+- General stats (default, can be disabled)
+- Genotype stats (default, can be disabled)
+- Sample compare (default, can be disabled)
+- Sample distributions (default, can be disabled)
+- Field histograms
 
 This tool can run locally single threaded but also on a Apache Spark cluster.
     
